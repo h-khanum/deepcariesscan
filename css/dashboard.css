@@ -1,0 +1,307 @@
+/* ==========================================================================
+   DeepCariesScan — Dashboard (page-specific styles)
+   Loads after components.css + app-shell.css.
+   ========================================================================== */
+
+.dcs-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
+}
+
+.dcs-page-header h1 {
+  font-size: var(--text-h1);
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: var(--text-primary);
+}
+
+.dcs-page-header p {
+  margin: 0;
+  font-size: var(--text-small);
+  color: var(--text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   STAT CARDS
+   -------------------------------------------------------------------------- */
+.dcs-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.dcs-stat-card {
+  background: var(--surface-white);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-resting);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  transition: box-shadow var(--transition-smooth), transform var(--transition-smooth);
+}
+
+.dcs-stat-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+
+.dcs-stat-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dcs-stat-card__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-input);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--clinical-teal-tint);
+  color: var(--clinical-teal-dark);
+  flex-shrink: 0;
+}
+
+.dcs-stat-card__icon svg { width: 20px; height: 20px; }
+.dcs-stat-card__icon--warning { background: var(--warning-tint); color: var(--on-warning-tint-d2); }
+.dcs-stat-card__icon--info { background: var(--info-tint); color: var(--on-info-tint); }
+
+.dcs-stat-card__label {
+  font-size: var(--text-small);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.dcs-stat-card__value {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.dcs-stat-card__trend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-micro);
+  font-weight: 600;
+}
+
+.dcs-stat-card__trend svg { width: 12px; height: 12px; }
+.dcs-stat-card__trend--up { color: var(--success); }
+.dcs-stat-card__trend--down { color: var(--error); }
+.dcs-stat-card__trend--flat { color: var(--text-muted); }
+.dcs-stat-card__trend-context { color: var(--text-muted); font-weight: 400; margin-left: 2px; }
+
+/* --------------------------------------------------------------------------
+   TWO-COLUMN CONTENT: severity distribution + quick actions
+   -------------------------------------------------------------------------- */
+.dcs-dash-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+  align-items: stretch;
+}
+
+.dcs-panel {
+  background: var(--surface-white);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-resting);
+  padding: var(--space-4);
+}
+
+.dcs-panel__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.dcs-panel__title {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 2px;
+}
+
+.dcs-panel__subtitle {
+  font-size: var(--text-micro);
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Severity distribution rows */
+.dcs-severity-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 44px;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+}
+
+.dcs-severity-row__label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.dcs-severity-row__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dcs-severity-row__bar {
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background: var(--clinical-white);
+  overflow: hidden;
+}
+
+.dcs-severity-row__bar-fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  width: 0%;
+  transition: width 700ms ease-in-out;
+}
+
+.dcs-severity-row__count {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+/* Quick actions */
+.dcs-quick-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  height: 100%;
+}
+
+.dcs-quick-action {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-input);
+  border: 1.5px solid var(--border-default);
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: border-color var(--transition-smooth), background var(--transition-smooth), transform var(--transition-smooth);
+}
+
+.dcs-quick-action:hover {
+  border-color: var(--clinical-teal);
+  background: var(--clinical-teal-tint);
+  transform: translateX(3px);
+}
+
+.dcs-quick-action__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-input);
+  background: var(--clinical-teal-tint);
+  color: var(--clinical-teal-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dcs-quick-action__icon svg { width: 20px; height: 20px; }
+
+.dcs-quick-action__title {
+  font-size: var(--text-small);
+  font-weight: 600;
+}
+
+.dcs-quick-action__desc {
+  font-size: var(--text-micro);
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   RECENT SCANS
+   -------------------------------------------------------------------------- */
+.dcs-table-wrap {
+  overflow-x: auto;
+}
+
+.dcs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-small);
+}
+
+.dcs-table th {
+  text-align: left;
+  font-size: var(--text-micro);
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--border-default);
+  white-space: nowrap;
+}
+
+.dcs-table td {
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--border-default);
+  vertical-align: middle;
+}
+
+.dcs-table tbody tr { transition: background var(--transition-smooth); }
+.dcs-table tbody tr:hover { background: var(--clinical-white); }
+.dcs-table tbody tr:last-child td { border-bottom: none; }
+
+.dcs-table__patient {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.dcs-table__patient-name { font-weight: 600; color: var(--text-primary); }
+.dcs-table__patient-id { font-size: var(--text-micro); color: var(--text-muted); }
+
+.dcs-table__confidence {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 110px;
+}
+
+.dcs-table__confidence .dcs-confidence-bar { width: 60px; }
+
+.dcs-panel__footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-3);
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE
+   -------------------------------------------------------------------------- */
+@media (max-width: 1180px) {
+  .dcs-stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .dcs-dash-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 560px) {
+  .dcs-stat-grid { grid-template-columns: 1fr; }
+  .dcs-severity-row { grid-template-columns: 100px 1fr 36px; }
+  .dcs-page-header { flex-direction: column; }
+  .dcs-page-header .dcs-btn { width: 100%; }
+}

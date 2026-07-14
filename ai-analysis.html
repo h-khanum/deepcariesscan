@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<script>
+  // Flash-safe theme init - runs before paint, before theme.js loads.
+  // Full toggle logic lives in js/theme.js (added in the JS pass).
+  (function () {
+    var saved = localStorage.getItem('dcs-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Analysis · DeepCariesScan</title>
+<meta name="description" content="Full AI analysis report — annotated X-ray, detected lesions, and severity breakdown." />
+
+<link rel="icon" type="image/png" href="img/logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/app-shell.css">
+<link rel="stylesheet" href="css/ai-analysis.css">
+</head>
+<body>
+
+<div class="dcs-app dcs-app--no-sidebar">
+  <div class="dcs-app__main">
+
+    <!-- TOPBAR -->
+    <header class="dcs-app__topbar dcs-mesh">
+      <div class="dcs-app__topbar-brand">
+        <img src="img/logo.png" alt="" />
+        DeepCariesScan
+      </div>
+      <div class="dcs-navbar__disclaimer">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Diagnostic aid — not a final diagnosis
+      </div>
+      <div class="dcs-app__topbar-right">
+        <button class="dcs-theme-toggle dcs-glass dcs-focus-ring" id="themeToggle" type="button" aria-label="Toggle dark mode" aria-pressed="false">
+          <svg class="dcs-theme-toggle__icon dcs-theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="dcs-theme-toggle__icon dcs-theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="dcs-app__content dcs-fade-in">
+
+      <a href="patient-details.html" class="dcs-report-banner__back dcs-focus-ring">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to patient record
+      </a>
+
+      <!-- Patient / session context banner -->
+      <div class="dcs-report-banner dcs-mesh">
+        <div>
+          <div class="dcs-report-banner__patient">
+            <div class="dcs-patient-card__avatar" id="reportAvatar">AR</div>
+            <div>
+              <div class="dcs-report-banner__name" id="reportPatientName">Ahmad Raza</div>
+              <div class="dcs-report-banner__meta">
+                <span><strong>ID</strong> PT-004821</span>
+                <span><strong>Age</strong> 34</span>
+                <span><strong>Scan date</strong> 11 Jul 2026</span>
+                <span><strong>Type</strong> Panoramic (OPG)</span>
+                <span><strong>Quadrant</strong> Full arch</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="dcs-report-banner__actions">
+          <button type="button" class="dcs-btn dcs-btn--ghost dcs-focus-ring" id="flagReviewBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86l-8.18 14.18A2 2 0 0 0 3.82 21h16.36a2 2 0 0 0 1.71-3.03L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+            Flag for review
+          </button>
+          <button type="button" class="dcs-btn dcs-btn--secondary dcs-focus-ring" id="printBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+            Print Report
+          </button>
+        </div>
+      </div>
+
+      <!-- Viewer + findings -->
+      <div class="dcs-report-grid">
+
+        <!-- Annotated image viewer -->
+        <div class="dcs-panel dcs-glass">
+          <div class="dcs-panel__header">
+            <h2 class="dcs-panel__title">Annotated X-ray</h2>
+          </div>
+
+          <div class="dcs-viewer-toolbar">
+            <div class="dcs-viewer-zoom">
+              <button type="button" class="dcs-btn dcs-btn--ghost dcs-btn--small dcs-focus-ring" id="zoomOutBtn" aria-label="Zoom out">−</button>
+              <span class="dcs-viewer-zoom__value" id="zoomValue">100%</span>
+              <button type="button" class="dcs-btn dcs-btn--ghost dcs-btn--small dcs-focus-ring" id="zoomInBtn" aria-label="Zoom in">+</button>
+              <button type="button" class="dcs-btn dcs-btn--ghost dcs-btn--small dcs-focus-ring" id="zoomResetBtn">Reset</button>
+            </div>
+            <label class="dcs-viewer-toggle">
+              <input type="checkbox" id="overlayToggle" checked />
+              Show detection overlay
+            </label>
+          </div>
+
+          <div class="dcs-viewer-frame" id="viewerFrame">
+            <div class="dcs-viewer-frame__inner" id="viewerInner">
+              <img src="img/sample-xray.jpg" alt="Panoramic X-ray with AI-detected lesions annotated" id="xrayImg" />
+              <!-- bounding boxes injected by ai-analysis.js -->
+            </div>
+          </div>
+
+          <div class="dcs-legend" id="legend"></div>
+        </div>
+
+        <!-- Findings sidebar -->
+        <div class="dcs-panel dcs-glass">
+          <div class="dcs-panel__header">
+            <h2 class="dcs-panel__title">Findings summary</h2>
+          </div>
+
+          <div class="dcs-report-stats">
+            <div class="dcs-report-stat">
+              <div class="dcs-report-stat__label">Lesions found</div>
+              <div class="dcs-report-stat__value" id="statCount">—</div>
+            </div>
+            <div class="dcs-report-stat">
+              <div class="dcs-report-stat__label">Highest severity</div>
+              <div class="dcs-report-stat__value" id="statHighest">—</div>
+            </div>
+            <div class="dcs-report-stat">
+              <div class="dcs-report-stat__label">Avg. confidence</div>
+              <div class="dcs-report-stat__value" id="statConfidence">—</div>
+            </div>
+            <div class="dcs-report-stat">
+              <div class="dcs-report-stat__label">Status</div>
+              <div class="dcs-report-stat__value" id="statStatus" style="font-size:16px;">—</div>
+            </div>
+          </div>
+
+          <div class="dcs-mascot-card dcs-glass" id="mascotCard" data-state="calm" style="margin-bottom: var(--space-4);">
+            <svg class="dcs-mascot" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle class="dcs-mascot__glow" cx="32" cy="32" r="29" stroke="var(--icy-mint)" stroke-width="1.5" opacity="0.5" fill="none"/>
+              <rect class="dcs-mascot__face" x="12" y="14" width="40" height="36" rx="14" fill="var(--clinical-teal)"/>
+              <circle cx="24" cy="32" r="4" fill="#0F172A"/>
+              <circle cx="40" cy="32" r="4" fill="#0F172A"/>
+              <path class="dcs-mascot__brow" id="browLeft" d="M19 24h10" stroke="#0F172A" stroke-width="2.5" stroke-linecap="round"/>
+              <path class="dcs-mascot__brow" id="browRight" d="M35 24h10" stroke="#0F172A" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M25 41q7 5 14 0" stroke="#0F172A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+              <rect x="28" y="6" width="8" height="8" rx="2" fill="var(--icy-mint)"/>
+            </svg>
+            <div class="dcs-mascot-card__text">
+              <div class="dcs-mascot-card__label">AI Assistant</div>
+              <div class="dcs-mascot-card__state" id="mascotStateLabel">—</div>
+            </div>
+          </div>
+
+          <h3 style="font-size:var(--text-small);font-weight:600;margin:0 0 8px;">Detected lesions</h3>
+          <div id="findingsList"></div>
+
+          <div class="dcs-report-notes">
+            <div class="dcs-field">
+              <label class="dcs-field__label" for="reportNotes">Clinician notes</label>
+              <textarea class="dcs-textarea dcs-focus-ring" id="reportNotes" placeholder="Add observations or a follow-up plan…">Patient reports mild sensitivity on lower right molars. Recommend follow-up in 2 weeks to monitor Dentin 2 lesion.</textarea>
+              <span class="dcs-field__helper">Saved with this scan's record</span>
+            </div>
+          </div>
+
+          <div class="dcs-report-footer-actions">
+            <button type="button" class="dcs-btn dcs-btn--secondary dcs-focus-ring" id="exportBtn">Export PDF</button>
+            <button type="button" class="dcs-btn dcs-btn--primary dcs-focus-ring" id="saveNotesBtn">Save Notes</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="dcs-disclaimer-inline" style="margin-top: var(--space-4);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <span>This report is generated by an AI-assisted diagnostic aid and is not a final diagnosis. All findings should be confirmed by a licensed clinician.</span>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ==================================================================
+     ACCOUNT MENU - bottom-left floating glass avatar (replaces top-right dropdown)
+     ================================================================== -->
+<div class="dcs-account-menu" id="accountMenu">
+  <button class="dcs-account-menu__trigger dcs-glass dcs-focus-ring" id="avatarBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Account menu">
+    <div class="dcs-patient-card__avatar">AT</div>
+  </button>
+  <div class="dcs-app__dropdown dcs-app__dropdown--up dcs-glass" id="avatarDropdown" hidden role="menu">
+    <div class="dcs-app__dropdown-header">
+      <div class="name">Dr. Ayesha Tariq</div>
+      <div class="role">dr.ayesha@kcd.edu.pk</div>
+    </div>
+    <a href="doctor-profile.html" class="dcs-app__dropdown-item" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Doctor Profile
+    </a>
+    <a href="settings.html" class="dcs-app__dropdown-item" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83"/></svg>
+      Settings
+    </a>
+    <a href="help.html" class="dcs-app__dropdown-item" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 2-3 4"/><path d="M12 17h.01"/></svg>
+      Help &amp; About
+    </a>
+    <button class="dcs-app__dropdown-item dcs-app__dropdown-item--danger" id="logoutItem" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+      Log Out
+    </button>
+  </div>
+</div>
+
+<!-- ==================================================================
+     FIXED GLASS PILL NAV - bottom center, all screen sizes
+     ================================================================== -->
+<nav class="dcs-pillnav dcs-glass" id="pillNav">
+  <a href="dashboard.html" class="dcs-pillnav__item dcs-focus-ring" data-page="dashboard">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    <span>Dashboard</span>
+  </a>
+  <a href="new-scan.html" class="dcs-pillnav__item dcs-focus-ring" data-page="new-scan">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+    <span>New Scan</span>
+  </a>
+  <a href="patient-history.html" class="dcs-pillnav__item dcs-focus-ring dcs-active" data-page="patient-history">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <span>History</span>
+  </a>
+  <a href="settings.html" class="dcs-pillnav__item dcs-focus-ring" data-page="settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    <span>Settings</span>
+  </a>
+</nav>
+
+<script src="js/theme.js"></script>
+<script src="js/components.js"></script>
+<script src="js/app-shell.js"></script>
+<script src="js/ai-analysis.js"></script>
+</body>
+</html>

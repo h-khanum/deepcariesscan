@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<script>
+  // Flash-safe theme init - runs before paint, before theme.js loads.
+  // Full toggle logic lives in js/theme.js (added in the JS pass).
+  (function () {
+    var saved = localStorage.getItem('dcs-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Doctor Profile · DeepCariesScan</title>
+<meta name="description" content="Your professional profile, stats, and recent activity in DeepCariesScan." />
+
+<link rel="icon" type="image/png" href="img/logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/app-shell.css">
+<link rel="stylesheet" href="css/dashboard.css"><!-- shared .dcs-page-header / .dcs-panel / .dcs-stat-card / .dcs-table -->
+<link rel="stylesheet" href="css/doctor-profile.css">
+</head>
+<body>
+
+<div class="dcs-app dcs-app--no-sidebar">
+  <div class="dcs-app__main">
+
+    <!-- TOPBAR -->
+    <header class="dcs-app__topbar dcs-mesh">
+      <div class="dcs-app__topbar-brand">
+        <img src="img/logo.png" alt="" />
+        DeepCariesScan
+      </div>
+      <div class="dcs-navbar__disclaimer">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Diagnostic aid — not a final diagnosis
+      </div>
+      <div class="dcs-app__topbar-right">
+        <button class="dcs-theme-toggle dcs-glass dcs-focus-ring" id="themeToggle" type="button" aria-label="Toggle dark mode" aria-pressed="false">
+          <svg class="dcs-theme-toggle__icon dcs-theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="dcs-theme-toggle__icon dcs-theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="dcs-app__content dcs-fade-in">
+
+      <!-- Profile banner -->
+      <div class="dcs-doc-banner dcs-mesh">
+        <div class="dcs-doc-banner__main">
+          <div class="dcs-doc-banner__avatar">AT</div>
+          <div>
+            <h1 class="dcs-doc-banner__name">Dr. Ayesha Tariq</h1>
+            <div class="dcs-doc-banner__title">Dental Practitioner · Restorative &amp; Preventive Dentistry</div>
+            <div class="dcs-doc-banner__tags">
+              <span><strong>License</strong> PMDC-DEN-48213</span>
+              <span><strong>Clinic</strong> Khyber College of Dentistry</span>
+              <span><strong>Member since</strong> Jan 2024</span>
+            </div>
+          </div>
+        </div>
+        <div class="dcs-doc-banner__actions">
+          <button type="button" class="dcs-btn dcs-btn--secondary dcs-focus-ring" id="editProfileBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Edit Profile
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="dcs-stat-grid">
+        <div class="dcs-stat-card dcs-glass">
+          <div class="dcs-stat-card__top">
+            <span class="dcs-stat-card__label">Scans Performed</span>
+            <span class="dcs-stat-card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            </span>
+          </div>
+          <div class="dcs-stat-card__value" data-count="482">0</div>
+        </div>
+        <div class="dcs-stat-card dcs-glass">
+          <div class="dcs-stat-card__top">
+            <span class="dcs-stat-card__label">Patients Treated</span>
+            <span class="dcs-stat-card__icon dcs-stat-card__icon--info">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            </span>
+          </div>
+          <div class="dcs-stat-card__value" data-count="216">0</div>
+        </div>
+        <div class="dcs-stat-card dcs-glass">
+          <div class="dcs-stat-card__top">
+            <span class="dcs-stat-card__label">Years of Experience</span>
+            <span class="dcs-stat-card__icon dcs-stat-card__icon--warning">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </span>
+          </div>
+          <div class="dcs-stat-card__value" data-count="9">0</div>
+        </div>
+        <div class="dcs-stat-card dcs-glass">
+          <div class="dcs-stat-card__top">
+            <span class="dcs-stat-card__label">Avg. Review Turnaround</span>
+            <span class="dcs-stat-card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </span>
+          </div>
+          <div class="dcs-stat-card__value" style="font-size:22px;">1.4 hrs</div>
+        </div>
+      </div>
+
+      <!-- Two-column: professional info + bio/qualifications/activity -->
+      <div class="dcs-profile-grid">
+
+        <div class="dcs-workspace__col">
+          <div class="dcs-panel dcs-glass">
+            <div class="dcs-panel__header"><h2 class="dcs-panel__title">Professional Information</h2></div>
+            <div class="dcs-info-row"><span class="dcs-info-row__label">Email</span><span class="dcs-info-row__value">dr.ayesha@kcd.edu.pk</span></div>
+            <div class="dcs-info-row"><span class="dcs-info-row__label">Phone</span><span class="dcs-info-row__value">+92 300 9988776</span></div>
+            <div class="dcs-info-row"><span class="dcs-info-row__label">Department</span><span class="dcs-info-row__value">Restorative Dentistry</span></div>
+            <div class="dcs-info-row"><span class="dcs-info-row__label">License number</span><span class="dcs-info-row__value">PMDC-DEN-48213</span></div>
+            <div class="dcs-info-row"><span class="dcs-info-row__label">Clinic</span><span class="dcs-info-row__value">KCD — OPD</span></div>
+          </div>
+
+          <div class="dcs-panel dcs-glass" style="margin-top: var(--space-4);">
+            <div class="dcs-panel__header"><h2 class="dcs-panel__title">Languages</h2></div>
+            <div class="dcs-lang-tags">
+              <span class="dcs-lang-tag">Urdu</span>
+              <span class="dcs-lang-tag">English</span>
+              <span class="dcs-lang-tag">Pashto</span>
+            </div>
+          </div>
+
+          <div class="dcs-panel dcs-glass" style="margin-top: var(--space-4);">
+            <div class="dcs-panel__header"><h2 class="dcs-panel__title">Qualifications</h2></div>
+            <div class="dcs-qual-list">
+              <div class="dcs-qual-item">
+                <span class="dcs-qual-item__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                </span>
+                <div>
+                  <div class="dcs-qual-item__title">BDS — Bachelor of Dental Surgery</div>
+                  <div class="dcs-qual-item__meta">Khyber College of Dentistry · 2015</div>
+                </div>
+              </div>
+              <div class="dcs-qual-item">
+                <span class="dcs-qual-item__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5L17 22l-5-3-5 3 1.5-8.5"/></svg>
+                </span>
+                <div>
+                  <div class="dcs-qual-item__title">FCPS — Operative Dentistry</div>
+                  <div class="dcs-qual-item__meta">College of Physicians &amp; Surgeons Pakistan · 2019</div>
+                </div>
+              </div>
+              <div class="dcs-qual-item">
+                <span class="dcs-qual-item__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                </span>
+                <div>
+                  <div class="dcs-qual-item__title">Certified AI-Assisted Diagnostics Practitioner</div>
+                  <div class="dcs-qual-item__meta">DeepCariesScan Clinical Training Program · 2026</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dcs-workspace__col">
+          <div class="dcs-panel dcs-glass">
+            <div class="dcs-panel__header"><h2 class="dcs-panel__title">About</h2></div>
+            <div class="dcs-field">
+              <textarea class="dcs-textarea dcs-focus-ring" id="bioText" style="min-height:120px;">Dr. Ayesha Tariq is a dental practitioner at Khyber College of Dentistry specializing in restorative and preventive care. She has led the pilot rollout of DeepCariesScan across the OPD, focusing on early-stage caries detection and patient education around preventive treatment.</textarea>
+              <span class="dcs-field__helper">Shown on your public clinic profile, if enabled by your administrator</span>
+            </div>
+            <div class="dcs-form-actions" style="display:flex;justify-content:flex-end;margin-top:var(--space-3);">
+              <button type="button" class="dcs-btn dcs-btn--primary dcs-focus-ring" id="saveBioBtn">Save bio</button>
+            </div>
+          </div>
+
+          <div class="dcs-panel dcs-glass" style="margin-top: var(--space-4);">
+            <div class="dcs-panel__header">
+              <div>
+                <h2 class="dcs-panel__title">Recent activity</h2>
+                <p class="dcs-panel__subtitle">Scans you've performed recently</p>
+              </div>
+            </div>
+            <div class="dcs-table-wrap">
+              <table class="dcs-table">
+                <thead>
+                  <tr>
+                    <th>Patient</th>
+                    <th>Date</th>
+                    <th>Highest severity</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="activityBody"></tbody>
+              </table>
+            </div>
+            <div class="dcs-panel__footer" style="display:flex;justify-content:flex-end;margin-top:var(--space-3);">
+              <a href="patient-history.html" class="dcs-btn dcs-btn--ghost dcs-btn--small dcs-focus-ring">View all history →</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ==================================================================
+     ACCOUNT MENU - bottom-left floating glass avatar (replaces top-right dropdown)
+     ================================================================== -->
+<div class="dcs-account-menu" id="accountMenu">
+  <button class="dcs-account-menu__trigger dcs-glass dcs-focus-ring" id="avatarBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Account menu" style="background:var(--clinical-teal-tint);">
+    <div class="dcs-patient-card__avatar">AT</div>
+  </button>
+  <div class="dcs-app__dropdown dcs-app__dropdown--up dcs-glass" id="avatarDropdown" hidden role="menu">
+    <div class="dcs-app__dropdown-header">
+      <div class="name">Dr. Ayesha Tariq</div>
+      <div class="role">dr.ayesha@kcd.edu.pk</div>
+    </div>
+    <a href="doctor-profile.html" class="dcs-app__dropdown-item" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Doctor Profile
+    </a>
+    <a href="settings.html" class="dcs-app__dropdown-item" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83"/></svg>
+      Settings
+    </a>
+    <a href="help.html" class="dcs-app__dropdown-item" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 2-3 4"/><path d="M12 17h.01"/></svg>
+      Help &amp; About
+    </a>
+    <button class="dcs-app__dropdown-item dcs-app__dropdown-item--danger" id="logoutItem" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+      Log Out
+    </button>
+  </div>
+</div>
+
+<!-- ==================================================================
+     FIXED GLASS PILL NAV - bottom center, all screen sizes
+     ================================================================== -->
+<nav class="dcs-pillnav dcs-glass" id="pillNav">
+  <a href="dashboard.html" class="dcs-pillnav__item dcs-focus-ring" data-page="dashboard">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    <span>Dashboard</span>
+  </a>
+  <a href="new-scan.html" class="dcs-pillnav__item dcs-focus-ring" data-page="new-scan">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+    <span>New Scan</span>
+  </a>
+  <a href="patient-history.html" class="dcs-pillnav__item dcs-focus-ring" data-page="patient-history">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <span>History</span>
+  </a>
+  <a href="settings.html" class="dcs-pillnav__item dcs-focus-ring" data-page="settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    <span>Settings</span>
+  </a>
+</nav>
+
+<script src="js/theme.js"></script>
+<script src="js/components.js"></script>
+<script src="js/app-shell.js"></script>
+<script src="js/doctor-profile.js"></script>
+</body>
+</html>

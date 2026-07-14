@@ -1,0 +1,345 @@
+/* ==========================================================================
+   DeepCariesScan — New Scan (page-specific styles)
+   Implements the 3-column diagnostic workspace, Design Bible §5:
+   Left = Patient Info · Center = Upload/Preview · Right = AI Results/Notes
+   Loads after components.css + app-shell.css.
+   ========================================================================== */
+
+.dcs-workspace {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr) 340px;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.dcs-workspace__col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* --------------------------------------------------------------------------
+   LEFT — PATIENT INFO
+   -------------------------------------------------------------------------- */
+.dcs-patient-tabs {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.dcs-patient-tabs .dcs-btn {
+  flex: 1;
+  min-height: 40px;
+  padding: 0 var(--space-2);
+}
+
+.dcs-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.dcs-patient-search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 220px;
+  overflow-y: auto;
+  margin-top: var(--space-2);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-input);
+  padding: 4px;
+}
+
+.dcs-patient-search-results:empty { display: none; }
+
+.dcs-patient-search-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-radius: var(--radius-input);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  font-family: var(--font-family);
+}
+
+.dcs-patient-search-item:hover { background: var(--clinical-teal-tint); }
+
+.dcs-patient-search-item .dcs-patient-card__avatar {
+  width: 32px;
+  height: 32px;
+  font-size: 11px;
+}
+
+.dcs-patient-search-item__name { font-size: var(--text-small); font-weight: 600; color: var(--text-primary); }
+.dcs-patient-search-item__meta { font-size: var(--text-micro); color: var(--text-muted); }
+
+.dcs-selected-patient[hidden],
+.dcs-new-patient-form[hidden],
+.dcs-patient-search-wrap[hidden] { display: none; }
+
+/* --------------------------------------------------------------------------
+   TOOTH CHART — replaces the old quadrant dropdown. Universal Numbering
+   System (1-32), clickable/toggleable, multi-select. Layout matches the
+   standard two-arch dental chart: upper arch 1-16 (right→left), lower
+   arch 17-32 (left→right), midline divider between them.
+   -------------------------------------------------------------------------- */
+.dcs-tooth-chart {
+  padding: var(--space-3);
+  border-radius: var(--radius-input);
+  margin-top: var(--space-2);
+}
+
+.dcs-tooth-chart-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.dcs-tooth-chart__midline {
+  stroke: var(--border-strong);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+
+.dcs-tooth-chart__side-label {
+  font-size: 15px;
+  font-weight: 700;
+  fill: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.dcs-tooth {
+  cursor: pointer;
+}
+
+/* Invisible tap-target — kept larger than the visible tooth shape so the
+   chart stays compact while tap targets remain reasonably forgiving. */
+.dcs-tooth__hit {
+  fill: transparent;
+  stroke: none;
+}
+
+.dcs-tooth__shape {
+  fill: var(--surface-white);
+  stroke: var(--border-strong);
+  stroke-width: 1.3;
+  transition: fill var(--transition-fast), stroke var(--transition-fast), transform var(--transition-fast);
+  transform-origin: center;
+}
+
+.dcs-tooth__num {
+  font-size: 11px;
+  font-weight: 600;
+  fill: var(--text-secondary);
+  text-anchor: middle;
+  pointer-events: none;
+  transition: fill var(--transition-fast);
+}
+
+.dcs-tooth:hover .dcs-tooth__shape {
+  stroke: var(--clinical-teal);
+  transform: scale(1.15);
+}
+
+.dcs-tooth:focus-visible .dcs-tooth__shape {
+  outline: none;
+  stroke: var(--clinical-teal);
+  stroke-width: 2;
+}
+
+.dcs-tooth.dcs-active .dcs-tooth__shape {
+  fill: var(--clinical-teal);
+  stroke: var(--clinical-teal-dark);
+}
+
+.dcs-tooth.dcs-active .dcs-tooth__num {
+  fill: #fff;
+}
+
+@media (max-width: 1180px) {
+  .dcs-tooth-chart-svg { max-width: 320px; margin: 0 auto; display: block; }
+}
+
+.dcs-selected-patient {
+  margin-top: var(--space-3);
+  position: relative;
+}
+
+.dcs-selected-patient__clear {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+}
+
+.dcs-new-patient-form { display: flex; flex-direction: column; gap: var(--space-3); }
+
+.dcs-session-meta {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-default);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* --------------------------------------------------------------------------
+   CENTER — UPLOAD / PREVIEW
+   -------------------------------------------------------------------------- */
+.dcs-upload-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--text-micro);
+  color: var(--text-muted);
+  margin-top: var(--space-3);
+}
+
+.dcs-upload-note svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 1px; color: var(--icy-blue); }
+
+.dcs-analyze-btn { width: 100%; margin-top: var(--space-3); }
+.dcs-analyze-btn .dcs-spinner {
+  width: 18px; height: 18px; border-width: 2px;
+  border-color: rgba(255,255,255,0.35); border-top-color: #fff;
+  display: none;
+}
+.dcs-analyze-btn.dcs-loading .dcs-spinner { display: inline-block; }
+
+.dcs-scan-loading[hidden],
+.dcs-scan-result[hidden] { display: none; }
+
+/* Processed image + bounding box overlay */
+.dcs-scan-result-image {
+  position: relative;
+  border-radius: var(--radius-input);
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  background: #0b0f16;
+  line-height: 0;
+}
+
+.dcs-scan-result-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.dcs-bbox {
+  position: absolute;
+  border: 2px solid var(--severity-e);
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.35);
+  animation: dcs-bbox-in 300ms ease-out both;
+}
+
+@keyframes dcs-bbox-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.dcs-bbox__label {
+  position: absolute;
+  top: -20px;
+  left: -2px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px 4px 4px 0;
+  white-space: nowrap;
+  background: var(--severity-e);
+}
+
+.dcs-scan-toolbar {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+.dcs-scan-toolbar .dcs-btn { flex: 1; }
+
+/* --------------------------------------------------------------------------
+   RIGHT — MASCOT + AI RESULTS + NOTES
+   -------------------------------------------------------------------------- */
+.dcs-mascot-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-card);
+  background: var(--primary-dark);
+  color: #fff;
+}
+
+.dcs-mascot { width: 48px; height: 48px; flex-shrink: 0; }
+.dcs-mascot__face { transition: fill var(--transition-standard); }
+.dcs-mascot__glow { transition: stroke var(--transition-standard), opacity var(--transition-standard); }
+.dcs-mascot__brow { transition: transform var(--transition-standard); transform-origin: center; }
+
+.dcs-mascot-card__text { flex: 1; }
+.dcs-mascot-card__label {
+  font-size: var(--text-micro);
+  color: #94A3B8;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-weight: 600;
+}
+.dcs-mascot-card__state { font-size: var(--text-small); font-weight: 700; }
+
+.dcs-mascot-card[data-state="calm"] .dcs-mascot-card__state { color: var(--icy-mint); }
+.dcs-mascot-card[data-state="attentive"] .dcs-mascot-card__state { color: var(--severity-d2); }
+.dcs-mascot-card[data-state="worried"] .dcs-mascot-card__state { color: #FCA5A5; }
+
+/* Results list */
+.dcs-results-summary {
+  font-size: var(--text-small);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-3);
+}
+.dcs-results-summary strong { color: var(--text-primary); }
+.dcs-results-summary[hidden] { display: none; }
+
+.dcs-results-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dcs-results-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-2);
+  padding: var(--space-5) var(--space-3);
+  color: var(--text-muted);
+}
+
+.dcs-results-empty svg { width: 36px; height: 36px; color: var(--border-strong); }
+.dcs-results-empty p { margin: 0; font-size: var(--text-small); max-width: 220px; }
+
+.dcs-notes-panel {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-default);
+}
+
+.dcs-notes-actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+.dcs-notes-actions .dcs-btn { flex: 1; }
+.dcs-notes-actions[hidden] { display: none; }
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE
+   -------------------------------------------------------------------------- */
+@media (max-width: 1180px) {
+  .dcs-workspace { grid-template-columns: 1fr; }
+}

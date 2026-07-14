@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lunar Duo – Moon Base Mission</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- ═══════════════════════════ SCREENS ═══════════════════════════ -->
+
+  <!-- START SCREEN -->
+  <div id="screen-start" class="screen active">
+    <div class="stars-bg"></div>
+    <div class="nebula-1"></div>
+    <div class="nebula-2"></div>
+
+    <div class="start-content">
+      <div class="logo-wrap">
+        <div class="planet-icon">🌙</div>
+        <h1 class="game-title">LUNAR <span class="accent">DUO</span></h1>
+        <p class="game-subtitle">Moon Base Mission</p>
+      </div>
+
+      <div class="story-card">
+        <p>Year 2187. An ancient moon base has gone silent.<br>
+        <strong>Astronaut Aria</strong> and <strong>Robot Rex</strong> are sent to investigate.<br>
+        Only together can they unlock its secrets.</p>
+      </div>
+
+      <div class="controls-preview">
+        <div class="ctrl-block">
+          <div class="char-badge astronaut-badge">👩‍🚀</div>
+          <span class="ctrl-label">Astronaut</span>
+          <div class="keys"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></div>
+        </div>
+        <div class="ctrl-divider">+</div>
+        <div class="ctrl-block">
+          <div class="char-badge robot-badge">🤖</div>
+          <span class="ctrl-label">Robot Rex</span>
+          <div class="keys"><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd></div>
+        </div>
+      </div>
+
+      <button class="btn-primary pulse" id="btn-play">▶ PLAY</button>
+    </div>
+  </div>
+
+  <!-- LEVEL SELECT SCREEN -->
+  <div id="screen-levels" class="screen">
+    <div class="stars-bg"></div>
+    <div class="screen-header">
+      <button class="btn-back" id="btn-back-start">← Back</button>
+      <h2 class="screen-title">SELECT MISSION</h2>
+    </div>
+    <div class="levels-grid" id="levels-grid"></div>
+  </div>
+
+  <!-- INTRO / TRANSITION SCREEN -->
+  <div id="screen-intro" class="screen">
+    <div class="stars-bg"></div>
+    <div class="intro-content">
+      <div class="mission-badge">MISSION <span id="intro-level-num">01</span></div>
+      <h2 class="intro-title" id="intro-title">Sector Alpha</h2>
+      <p class="intro-text" id="intro-text">Navigate the ancient corridors of the moon base...</p>
+      <button class="btn-primary" id="btn-start-level">LAUNCH MISSION</button>
+    </div>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="screen-game" class="screen">
+    <!-- HUD -->
+    <div id="hud">
+      <div class="hud-left">
+        <div class="hud-level">MISSION <span id="hud-level">01</span></div>
+      </div>
+      <div class="hud-center">
+        <div class="hud-timer-wrap">
+          <span class="hud-icon">⏱</span>
+          <span id="hud-timer">00:00</span>
+        </div>
+      </div>
+      <div class="hud-right">
+        <div class="hud-score-wrap">
+          <span class="hud-icon">⭐</span>
+          <span id="hud-score">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Char indicators -->
+    <div id="char-indicators">
+      <div class="char-indicator" id="ind-astronaut">
+        <span>👩‍🚀</span> <span class="char-name">Aria</span>
+        <div class="status-dot green"></div>
+      </div>
+      <div class="char-indicator" id="ind-robot">
+        <span>🤖</span> <span class="char-name">Rex</span>
+        <div class="status-dot green"></div>
+      </div>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Pause overlay -->
+    <div id="pause-overlay" class="hidden">
+      <div class="pause-card">
+        <h3>⏸ PAUSED</h3>
+        <button class="btn-primary" id="btn-resume">RESUME</button>
+        <button class="btn-secondary" id="btn-quit">QUIT</button>
+      </div>
+    </div>
+
+    <button id="btn-pause">⏸</button>
+  </div>
+
+  <!-- END SCREEN -->
+  <div id="screen-end" class="screen">
+    <div class="stars-bg"></div>
+    <div class="end-content">
+      <div class="end-result" id="end-result-icon">✅</div>
+      <h2 class="end-title" id="end-title">Mission Complete!</h2>
+
+      <div class="stars-display" id="stars-display">
+        <span class="star" id="star1">⭐</span>
+        <span class="star" id="star2">⭐</span>
+        <span class="star" id="star3">⭐</span>
+      </div>
+
+      <div class="end-stats">
+        <div class="stat-row">
+          <span class="stat-label">Time</span>
+          <span class="stat-val" id="end-time">00:00</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Score</span>
+          <span class="stat-val" id="end-score">0</span>
+        </div>
+      </div>
+
+      <div class="end-message" id="end-message"></div>
+
+      <div class="end-buttons">
+        <button class="btn-secondary" id="btn-retry">↩ Retry</button>
+        <button class="btn-primary" id="btn-next">Next Mission →</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

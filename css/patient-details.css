@@ -1,0 +1,176 @@
+/* ==========================================================================
+   DeepCariesScan — Patient Details (page-specific styles)
+   The individual patient's full profile + scan-history-over-time screen.
+   Loads after components.css + app-shell.css + dashboard.css (shared
+   .dcs-page-header / .dcs-panel / .dcs-table / .dcs-stat-card styles).
+   ========================================================================== */
+
+.dcs-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-decoration: none;
+  margin-bottom: var(--space-3);
+}
+.dcs-back-link:hover { color: var(--clinical-teal); }
+.dcs-back-link svg { width: 16px; height: 16px; }
+
+/* --------------------------------------------------------------------------
+   PATIENT PROFILE BANNER
+   -------------------------------------------------------------------------- */
+.dcs-profile-banner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-resting);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.dcs-profile-banner__main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.dcs-profile-banner__main .dcs-patient-card__avatar {
+  width: 64px;
+  height: 64px;
+  font-size: var(--text-h3);
+}
+
+.dcs-profile-banner__name {
+  font-size: var(--text-h1);
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 4px;
+}
+
+.dcs-profile-banner__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-size: var(--text-micro);
+  color: #94A3B8;
+}
+
+.dcs-profile-banner__tags strong { color: #E2E8F0; font-weight: 600; }
+
+.dcs-profile-banner__actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.dcs-profile-banner__actions .dcs-btn--ghost {
+  color: #E2E8F0;
+}
+.dcs-profile-banner__actions .dcs-btn--ghost:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+/* --------------------------------------------------------------------------
+   TWO-COLUMN LAYOUT — narrow info column + wide history column
+   -------------------------------------------------------------------------- */
+.dcs-details-grid {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.dcs-info-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border-default);
+  font-size: var(--text-small);
+}
+.dcs-info-row:last-child { border-bottom: none; }
+.dcs-info-row__label { color: var(--text-muted); }
+.dcs-info-row__value { color: var(--text-primary); font-weight: 600; text-align: right; }
+
+.dcs-medical-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.dcs-medical-tag {
+  font-size: var(--text-micro);
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--warning-tint);
+  color: var(--on-warning-tint-d2);
+}
+
+.dcs-medical-tag--none {
+  background: var(--clinical-white);
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   SEVERITY TREND
+   -------------------------------------------------------------------------- */
+.dcs-trend {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+  height: 140px;
+  padding: var(--space-3) var(--space-2) 0;
+}
+
+.dcs-trend__col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.dcs-trend__severity-label {
+  font-size: var(--text-micro);
+  font-weight: 700;
+}
+
+.dcs-trend__bar-track {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  justify-content: center;
+}
+
+.dcs-trend__bar {
+  width: 32px;
+  border-radius: 6px 6px 3px 3px;
+  transition: height 500ms ease-out;
+}
+
+.dcs-trend__date {
+  font-size: var(--text-micro);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .dcs-details-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .dcs-profile-banner { flex-direction: column; }
+  .dcs-profile-banner__actions { width: 100%; }
+  .dcs-profile-banner__actions .dcs-btn { flex: 1; }
+}

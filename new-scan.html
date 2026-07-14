@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<script>
+  // Flash-safe theme init - runs before paint, before theme.js loads.
+  // Full toggle logic lives in js/theme.js (added in the JS pass).
+  (function () {
+    var saved = localStorage.getItem('dcs-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>New Scan · DeepCariesScan</title>
+<meta name="description" content="Start a new DeepCariesScan session — select a patient, upload an X-ray, and run AI-assisted caries detection." />
+
+<link rel="icon" type="image/png" href="img/logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/app-shell.css">
+<link rel="stylesheet" href="css/dashboard.css"><!-- provides .dcs-panel padding/radius/shadow, used throughout this page -->
+<link rel="stylesheet" href="css/new-scan.css">
+</head>
+<body>
+
+<div class="dcs-app dcs-app--no-sidebar">
+  <div class="dcs-app__main">
+
+    <!-- TOPBAR -->
+    <header class="dcs-app__topbar dcs-mesh">
+      <div class="dcs-app__topbar-brand">
+        <img src="img/logo.png" alt="" />
+        DeepCariesScan
+      </div>
+      <div class="dcs-navbar__disclaimer">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Diagnostic aid — not a final diagnosis
+      </div>
+      <div class="dcs-app__topbar-right">
+        <button class="dcs-theme-toggle dcs-glass dcs-focus-ring" id="themeToggle" type="button" aria-label="Toggle dark mode" aria-pressed="false">
+          <svg class="dcs-theme-toggle__icon dcs-theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="dcs-theme-toggle__icon dcs-theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="dcs-app__content dcs-fade-in">
+
+      <div class="dcs-page-header">
+        <div>
+          <h1>New Scan</h1>
+          <p>Select a patient, upload an X-ray, and run AI-assisted caries detection.</p>
+        </div>
+      </div>
+
+      <!-- 3-column diagnostic workspace (Design Bible §5) -->
+      <div class="dcs-workspace">
+
+        <!-- ============================================================
+             LEFT — PATIENT INFO
+             ============================================================ -->
+        <div class="dcs-workspace__col dcs-workspace__col--left">
+          <div class="dcs-panel dcs-glass">
+            <div class="dcs-panel__header">
+              <h2 class="dcs-panel__title">Patient</h2>
+            </div>
+
+            <div class="dcs-patient-tabs" role="tablist" aria-label="Patient selection mode">
+              <button type="button" class="dcs-btn dcs-btn--primary dcs-btn--small dcs-focus-ring" id="tabExisting" role="tab" aria-selected="true">Existing Patient</button>
+              <button type="button" class="dcs-btn dcs-btn--ghost dcs-btn--small dcs-focus-ring" id="tabNew" role="tab" aria-selected="false">New Patient</button>
+            </div>
+
+            <!-- Existing patient search -->
+            <div id="existingPatientPanel">
+              <div class="dcs-patient-search-wrap" id="patientSearchWrap">
+                <div class="dcs-field">
+                  <label class="dcs-field__label" for="patientSearch">Search by name or ID</label>
+                  <input class="dcs-input dcs-focus-ring" type="text" id="patientSearch" placeholder="e.g., Ahmad or PT-0048" autocomplete="off" />
+                </div>
+                <div class="dcs-patient-search-results" id="patientSearchResults"></div>
+              </div>
+
+              <div class="dcs-selected-patient dcs-patient-card" id="selectedPatientCard" hidden>
+                <button class="dcs-btn dcs-btn--ghost dcs-btn--icon-only dcs-btn--small dcs-selected-patient__clear dcs-focus-ring" id="clearPatientBtn" aria-label="Clear selected patient">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+                <div class="dcs-patient-card__header">
+                  <div style="display:flex;align-items:center;gap:12px;">
+                    <div class="dcs-patient-card__avatar" id="selectedPatientAvatar">--</div>
+                    <div>
+                      <div class="dcs-patient-card__name" id="selectedPatientName">—</div>
+                      <div class="dcs-patient-card__id" id="selectedPatientId">—</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="dcs-patient-card__row"><span class="dcs-patient-card__row-label">Age</span><span class="dcs-patient-card__row-value" id="selectedPatientAge">—</span></div>
+                <div class="dcs-patient-card__row"><span class="dcs-patient-card__row-label">Last visit</span><span class="dcs-patient-card__row-value" id="selectedPatientLastVisit">—</span></div>
+              </div>
+            </div>
+
+            <!-- New patient quick-intake form -->
+            <form class="dcs-new-patient-form" id="newPatientForm" hidden>
+              <div class="dcs-field">
+                <label class="dcs-field__label" for="newPatientName">Full name</label>
+                <input class="dcs-input dcs-focus-ring" type="text" id="newPatientName" placeholder="e.g., Ahmad Raza" />
+              </div>
+              <div class="dcs-field">
+                <label class="dcs-field__label" for="newPatientAge">Age</label>
+                <input class="dcs-input dcs-focus-ring" type="number" id="newPatientAge" min="1" max="120" placeholder="e.g., 34" />
+              </div>
+              <div class="dcs-field">
+                <label class="dcs-field__label" for="newPatientGender">Gender</label>
+                <select class="dcs-select dcs-focus-ring" id="newPatientGender">
+                  <option>Female</option>
+                  <option>Male</option>
+                  <option>Other / Prefer not to say</option>
+                </select>
+              </div>
+            </form>
+
+            <!-- Session metadata -->
+            <div class="dcs-session-meta">
+              <div class="dcs-field">
+                <label class="dcs-field__label" for="sessionDate">Session date</label>
+                <input class="dcs-input dcs-focus-ring" type="text" id="sessionDate" value="11 Jul 2026" />
+              </div>
+              <div class="dcs-field">
+                <label class="dcs-field__label" for="referringClinic">Referring clinic</label>
+                <input class="dcs-input dcs-focus-ring" type="text" id="referringClinic" value="KCD — OPD" />
+              </div>
+              <div class="dcs-field">
+                <label class="dcs-field__label">Tooth selection</label>
+                <div class="dcs-tooth-chart dcs-glass" id="toothChart">
+                <svg class="dcs-tooth-chart-svg" viewBox="0 0 480 420" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="Selectable tooth chart">
+                  <defs>
+                    <path id="dcs-tooth-shape" d="M -6,-9 C -6,-11.5 6,-11.5 6,-9 L 6,3 C 6,8 3,9.5 0,9.5 C -3,9.5 -6,8 -6,3 Z"></path>
+                  </defs>
+                  <!-- Midline -->
+                  <line class="dcs-tooth-chart__midline" x1="240" y1="118" x2="240" y2="302"></line>
+                  <text class="dcs-tooth-chart__side-label" x="40" y="210.0" text-anchor="end">Right</text>
+                  <text class="dcs-tooth-chart__side-label" x="440" y="210.0" text-anchor="start">Left</text>
+                  <g class="dcs-tooth-chart__upper">
+                      <g class="dcs-tooth" data-tooth="1" tabindex="0" role="button" aria-label="Tooth 1" transform="translate(44.0,118.0)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(-90.0)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">1</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="2" tabindex="0" role="button" aria-label="Tooth 2" transform="translate(48.3,101.0)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(-84.9)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">2</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="3" tabindex="0" role="button" aria-label="Tooth 3" transform="translate(60.9,84.6)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(-79.4)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">3</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="4" tabindex="0" role="button" aria-label="Tooth 4" transform="translate(81.4,69.8)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(-73.1)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">4</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="5" tabindex="0" role="button" aria-label="Tooth 5" transform="translate(108.9,57.1)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(-65.1)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">5</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="6" tabindex="0" role="button" aria-label="Tooth 6" transform="translate(142.0,47.0)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(-54.1)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">6</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="7" tabindex="0" role="button" aria-label="Tooth 7" transform="translate(179.4,40.0)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(-37.8)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">7</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="8" tabindex="0" role="button" aria-label="Tooth 8" transform="translate(219.5,36.4)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(-14.1)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">8</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="9" tabindex="0" role="button" aria-label="Tooth 9" transform="translate(260.5,36.4)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(14.1)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">9</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="10" tabindex="0" role="button" aria-label="Tooth 10" transform="translate(300.6,40.0)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(37.8)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">10</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="11" tabindex="0" role="button" aria-label="Tooth 11" transform="translate(338.0,47.0)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(54.1)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">11</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="12" tabindex="0" role="button" aria-label="Tooth 12" transform="translate(371.1,57.1)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(65.1)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">12</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="13" tabindex="0" role="button" aria-label="Tooth 13" transform="translate(398.6,69.8)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(73.1)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">13</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="14" tabindex="0" role="button" aria-label="Tooth 14" transform="translate(419.1,84.6)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(79.4)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">14</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="15" tabindex="0" role="button" aria-label="Tooth 15" transform="translate(431.7,101.0)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(84.9)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">15</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="16" tabindex="0" role="button" aria-label="Tooth 16" transform="translate(436.0,118.0)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(90.0)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">16</text>
+                      </g>
+                  </g>
+                  <g class="dcs-tooth-chart__lower">
+                      <g class="dcs-tooth" data-tooth="17" tabindex="0" role="button" aria-label="Tooth 17" transform="translate(44.0,302.0)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(270.0)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">17</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="18" tabindex="0" role="button" aria-label="Tooth 18" transform="translate(48.3,319.0)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(264.9)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">18</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="19" tabindex="0" role="button" aria-label="Tooth 19" transform="translate(60.9,335.4)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(259.4)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">19</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="20" tabindex="0" role="button" aria-label="Tooth 20" transform="translate(81.4,350.2)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(253.1)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">20</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="21" tabindex="0" role="button" aria-label="Tooth 21" transform="translate(108.9,362.9)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(245.1)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">21</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="22" tabindex="0" role="button" aria-label="Tooth 22" transform="translate(142.0,373.0)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(234.1)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">22</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="23" tabindex="0" role="button" aria-label="Tooth 23" transform="translate(179.4,380.0)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(217.8)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">23</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="24" tabindex="0" role="button" aria-label="Tooth 24" transform="translate(219.5,383.6)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(194.1)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">24</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="25" tabindex="0" role="button" aria-label="Tooth 25" transform="translate(260.5,383.6)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(165.9)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">25</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="26" tabindex="0" role="button" aria-label="Tooth 26" transform="translate(300.6,380.0)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(142.2)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">26</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="27" tabindex="0" role="button" aria-label="Tooth 27" transform="translate(338.0,373.0)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(125.9)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">27</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="28" tabindex="0" role="button" aria-label="Tooth 28" transform="translate(371.1,362.9)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(114.9)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">28</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="29" tabindex="0" role="button" aria-label="Tooth 29" transform="translate(398.6,350.2)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(106.9)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">29</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="30" tabindex="0" role="button" aria-label="Tooth 30" transform="translate(419.1,335.4)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(100.6)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">30</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="31" tabindex="0" role="button" aria-label="Tooth 31" transform="translate(431.7,319.0)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(95.1)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">31</text>
+                      </g>
+                      <g class="dcs-tooth" data-tooth="32" tabindex="0" role="button" aria-label="Tooth 32" transform="translate(436.0,302.0)">
+                        <circle class="dcs-tooth__hit" r="15"></circle>
+                        <g transform="rotate(90.0)">
+                          <use href="#dcs-tooth-shape" class="dcs-tooth__shape"></use>
+                        </g>
+                        <text class="dcs-tooth__num" y="4">32</text>
+                      </g>
+                  </g>
+                </svg>
+                </div>
+                <span class="dcs-field__helper" id="toothSelectionHelper">No teeth selected</span>
+                <input type="hidden" id="selectedTeeth" value="" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================
+             CENTER — X-RAY UPLOAD + PREVIEW
+             ============================================================ -->
+        <div class="dcs-workspace__col dcs-workspace__col--center">
+          <div class="dcs-panel dcs-glass">
+            <div class="dcs-panel__header">
+              <h2 class="dcs-panel__title">X-ray upload</h2>
+            </div>
+
+            <!-- Upload dropzone -->
+            <div class="dcs-upload dcs-focus-ring" id="xrayUpload">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+              <div class="dcs-upload__prompt">
+                <div class="dcs-upload__title">Drag &amp; drop X-ray, or click to browse</div>
+                <div class="dcs-upload__hint">JPEG or PNG, up to 10MB</div>
+              </div>
+            </div>
+            <div class="dcs-upload-note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              Uploaded images are analyzed and not stored afterward (§11).
+            </div>
+
+            <!-- Loading state during simulated inference -->
+            <div class="dcs-scan-loading" id="scanLoading" hidden></div>
+
+            <!-- Processed image + bounding boxes, shown after analysis -->
+            <div class="dcs-scan-result" id="scanResult" hidden>
+              <div class="dcs-scan-result-image" id="scanResultImage"></div>
+              <div class="dcs-scan-toolbar">
+                <button type="button" class="dcs-btn dcs-btn--ghost dcs-focus-ring" id="replaceImageBtn">Replace image</button>
+                <button type="button" class="dcs-btn dcs-btn--secondary dcs-focus-ring" id="reanalyzeBtn">Re-analyze</button>
+              </div>
+            </div>
+
+            <button type="button" class="dcs-btn dcs-btn--primary dcs-analyze-btn dcs-focus-ring" id="analyzeBtn" disabled>
+              <span class="dcs-spinner" id="analyzeSpinner"></span>
+              <span id="analyzeLabel">Analyze X-ray</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ============================================================
+             RIGHT — AI RESULTS + NOTES
+             ============================================================ -->
+        <div class="dcs-workspace__col dcs-workspace__col--right">
+
+          <div class="dcs-panel dcs-glass">
+            <div class="dcs-panel__header">
+              <h2 class="dcs-panel__title">AI Results</h2>
+            </div>
+
+            <p class="dcs-results-summary" id="resultsSummary" hidden></p>
+
+            <div class="dcs-results-empty" id="resultsEmpty">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h.01M15 9h.01M8 15s1.5 2 4 2 4-2 4-2"/></svg>
+              <p>Results will appear here once you upload and analyze an X-ray.</p>
+            </div>
+
+            <div class="dcs-results-list" id="resultsList"></div>
+
+            <!-- Clinician notes + save/discard -->
+            <div class="dcs-notes-panel">
+              <div class="dcs-field">
+                <label class="dcs-field__label" for="clinicianNotes">Clinician notes</label>
+                <textarea class="dcs-textarea dcs-focus-ring" id="clinicianNotes" placeholder="Add observations, referral reason, or follow-up plan…"></textarea>
+                <span class="dcs-field__helper">Optional — saved alongside the scan for later reference</span>
+              </div>
+              <div class="dcs-notes-actions" id="notesActions" hidden>
+                <button type="button" class="dcs-btn dcs-btn--destructive dcs-focus-ring" id="discardBtn">Discard</button>
+                <button type="button" class="dcs-btn dcs-btn--primary dcs-focus-ring" id="saveRecordBtn">Save to Patient Record</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ==================================================================
+     ACCOUNT MENU - bottom-left floating glass avatar (replaces top-right dropdown)
+     ================================================================== -->
+<div class="dcs-account-menu" id="accountMenu">
+  <button class="dcs-account-menu__trigger dcs-glass dcs-focus-ring" id="avatarBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Account menu">
+    <div class="dcs-patient-card__avatar">AT</div>
+  </button>
+  <div class="dcs-app__dropdown dcs-app__dropdown--up dcs-glass" id="avatarDropdown" hidden role="menu">
+    <div class="dcs-app__dropdown-header">
+      <div class="name">Dr. Ayesha Tariq</div>
+      <div class="role">dr.ayesha@kcd.edu.pk</div>
+    </div>
+    <a href="doctor-profile.html" class="dcs-app__dropdown-item" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Doctor Profile
+    </a>
+    <a href="settings.html" class="dcs-app__dropdown-item" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83"/></svg>
+      Settings
+    </a>
+    <a href="help.html" class="dcs-app__dropdown-item" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 2-3 4"/><path d="M12 17h.01"/></svg>
+      Help &amp; About
+    </a>
+    <button class="dcs-app__dropdown-item dcs-app__dropdown-item--danger" id="logoutItem" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+      Log Out
+    </button>
+  </div>
+</div>
+
+<!-- ==================================================================
+     FIXED GLASS PILL NAV - bottom center, all screen sizes
+     ================================================================== -->
+<nav class="dcs-pillnav dcs-glass" id="pillNav">
+  <a href="dashboard.html" class="dcs-pillnav__item dcs-focus-ring" data-page="dashboard">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    <span>Dashboard</span>
+  </a>
+  <a href="new-scan.html" class="dcs-pillnav__item dcs-focus-ring dcs-active" data-page="new-scan">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+    <span>New Scan</span>
+  </a>
+  <a href="patient-history.html" class="dcs-pillnav__item dcs-focus-ring" data-page="patient-history">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <span>History</span>
+  </a>
+  <a href="settings.html" class="dcs-pillnav__item dcs-focus-ring" data-page="settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    <span>Settings</span>
+  </a>
+</nav>
+
+<script src="js/theme.js"></script>
+<script src="js/components.js"></script>
+<script src="js/app-shell.js"></script>
+<script src="js/new-scan.js"></script>
+</body>
+</html>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<script>
+  // Flash-safe theme init - runs before paint, before theme.js loads.
+  // Full toggle logic lives in js/theme.js (added in the JS pass).
+  (function () {
+    var saved = localStorage.getItem('dcs-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Settings · DeepCariesScan</title>
+<meta name="description" content="Manage your account, notifications, AI preferences, and clinic information." />
+
+<link rel="icon" type="image/png" href="img/logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/app-shell.css">
+<link rel="stylesheet" href="css/dashboard.css"><!-- shared .dcs-page-header / .dcs-panel -->
+<link rel="stylesheet" href="css/settings.css">
+</head>
+<body>
+
+<div class="dcs-app dcs-app--no-sidebar">
+  <div class="dcs-app__main">
+
+    <!-- TOPBAR -->
+    <header class="dcs-app__topbar dcs-mesh">
+      <div class="dcs-app__topbar-brand">
+        <img src="img/logo.png" alt="" />
+        DeepCariesScan
+      </div>
+      <div class="dcs-navbar__disclaimer">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Diagnostic aid — not a final diagnosis
+      </div>
+      <div class="dcs-app__topbar-right">
+        <button class="dcs-theme-toggle dcs-glass dcs-focus-ring" id="themeToggle" type="button" aria-label="Toggle dark mode" aria-pressed="false">
+          <svg class="dcs-theme-toggle__icon dcs-theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="dcs-theme-toggle__icon dcs-theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="dcs-app__content dcs-fade-in">
+
+      <div class="dcs-page-header">
+        <div>
+          <h1>Settings</h1>
+          <p>Manage your account, notifications, and AI analysis preferences.</p>
+        </div>
+      </div>
+
+      <div class="dcs-settings-grid">
+
+        <!-- Sub-nav -->
+        <nav class="dcs-settings-nav" id="settingsNav" aria-label="Settings sections">
+          <a href="#account" class="dcs-settings-nav__link dcs-active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Account
+          </a>
+          <a href="#security" class="dcs-settings-nav__link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Security
+          </a>
+          <a href="#notifications" class="dcs-settings-nav__link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            Notifications
+          </a>
+          <a href="#ai-preferences" class="dcs-settings-nav__link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            AI Preferences
+          </a>
+          <a href="#clinic" class="dcs-settings-nav__link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1M9 13h1M14 9h1M14 13h1"/></svg>
+            Clinic Information
+          </a>
+          <a href="#privacy" class="dcs-settings-nav__link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg>
+            Privacy &amp; Data
+          </a>
+        </nav>
+
+        <!-- Sections -->
+        <div>
+
+          <section class="dcs-panel dcs-glass dcs-settings-section" id="account">
+            <div class="dcs-panel__header"><h2 class="dcs-panel__title">Account</h2></div>
+            <p class="dcs-settings-section__desc">Your personal and professional details, shown across the app and on reports.</p>
+            <div class="dcs-form-row">
+              <div class="dcs-field">
+                <label class="dcs-field__label" for="fullName">Full name</label>
+                <input class="dcs-input dcs-focus-ring" type="text" id="fullName" value="Dr. Ayesha Tariq" />
+              </div>
+              <div class="dcs-field">
+                <label class="dcs-field__label" for="titleRole">Title / Role</label>
+                <input class="dcs-input dcs-focus-ring" type="text" id="titleRole" value="Dental Practitioner" />
+              </div>
+            </div>
+            <div class="dcs-form-row" style="margin-top: var(--space-3);">
+              <div class="dcs-field">
+                <label class="dcs-field__label" for="email">Email</label>
+                <input class="dcs-input dcs-focus-ring" type="email" id="email" value="dr.ayesha@kcd.edu.pk" />
+              </div>
+              <div class="dcs-field">
+                <label class="dcs-field__label" for="phone">Phone</label>
+                <input class="dcs-input dcs-focus-ring" type="tel" id="phone" value="+92 300 9988776" />
+              </div>
+            </div>
+            <div class="dcs-form-actions">
+              <button type="button" class="dcs-btn dcs-btn--primary dcs-focus-ring" data-save="Account details">Save changes</button>
+            </div>
+          </section>
+
+          <section class="dcs-panel dcs-glass dcs-settings-section" id="security">
+            <div class="dcs-panel__header"><h2 class="dcs-panel__title">Security</h2></div>
+            <p class="dcs-settings-section__desc">Change your password. You'll stay signed in on this device.</p>
+            <div class="dcs-field">
+              <label class="dcs-field__label" for="currentPassword">Current password</label>
+              <div class="dcs-password-wrap">
+                <input class="dcs-input dcs-focus-ring" type="password" id="currentPassword" placeholder="Enter current password" />
+                <button type="button" class="dcs-password-wrap__toggle dcs-focus-ring" data-toggle-for="currentPassword" aria-label="Show password">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="dcs-form-row" style="margin-top: var(--space-3);">
+              <div class="dcs-field">
+                <label class="dcs-field__label" for="newPassword">New password</label>
+                <div class="dcs-password-wrap">
+                  <input class="dcs-input dcs-focus-ring" type="password" id="newPassword" placeholder="At least 8 characters" />
+                  <button type="button" class="dcs-password-wrap__toggle dcs-focus-ring" data-toggle-for="newPassword" aria-label="Show password">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
+                </div>
+              </div>
+              <div class="dcs-field">
+                <label class="dcs-field__label" for="confirmPassword">Confirm new password</label>
+                <div class="dcs-password-wrap">
+                  <input class="dcs-input dcs-focus-ring" type="password" id="confirmPassword" placeholder="Re-enter new password" />
+                  <button type="button" class="dcs-password-wrap__toggle dcs-focus-ring" data-toggle-for="confirmPassword" aria-label="Show password">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
+                </div>
+                <span class="dcs-field__error" id="passwordMatchError" hidden>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                  Passwords do not match
+                </span>
+              </div>
+            </div>
+            <div class="dcs-form-actions">
+              <button type="button" class="dcs-btn dcs-btn--primary dcs-focus-ring" id="changePasswordBtn">Update password</button>
+            </div>
+          </section>
+
+          <section class="dcs-panel dcs-glass dcs-settings-section" id="notifications">
+            <div class="dcs-panel__header"><h2 class="dcs-panel__title">Notifications</h2></div>
+            <p class="dcs-settings-section__desc">Choose what you'd like to be notified about.</p>
+
+            <div class="dcs-switch-row">
+              <div>
+                <div class="dcs-switch-row__title">Analysis complete</div>
+                <div class="dcs-switch-row__desc">Get notified when an AI analysis finishes running</div>
+              </div>
+              <label class="dcs-switch">
+                <input type="checkbox" checked />
+                <span class="dcs-switch__track"></span>
+              </label>
+            </div>
+            <div class="dcs-switch-row">
+              <div>
+                <div class="dcs-switch-row__title">Flagged for review</div>
+                <div class="dcs-switch-row__desc">Get notified when a scan is flagged as low-confidence</div>
+              </div>
+              <label class="dcs-switch">
+                <input type="checkbox" checked />
+                <span class="dcs-switch__track"></span>
+              </label>
+            </div>
+            <div class="dcs-switch-row">
+              <div>
+                <div class="dcs-switch-row__title">Weekly summary email</div>
+                <div class="dcs-switch-row__desc">A digest of scans and outcomes from the past week</div>
+              </div>
+              <label class="dcs-switch">
+                <input type="checkbox" />
+                <span class="dcs-switch__track"></span>
+              </label>
+            </div>
+            <div class="dcs-switch-row">
+              <div>
+                <div class="dcs-switch-row__title">SMS alerts</div>
+                <div class="dcs-switch-row__desc">Text message alerts for urgent (Pulp-severity) findings</div>
+              </div>
+              <label class="dcs-switch">
+                <input type="checkbox" />
+                <span class="dcs-switch__track"></span>
+              </label>
+            </div>
+          </section>
+
+          <section class="dcs-panel dcs-glass dcs-settings-section" id="ai-preferences">
+            <div class="dcs-panel__header"><h2 class="dcs-panel__title">AI Preferences</h2></div>
+            <p class="dcs-settings-section__desc">Tune how DeepCariesScan flags results for your review.</p>
+
+            <div class="dcs-range-row">
+              <div class="dcs-range-row__top">
+                <label class="dcs-field__label" for="confidenceThreshold" style="margin:0;">Flag findings below this confidence for review</label>
+                <span class="dcs-range-row__value" id="confidenceValue">70%</span>
+              </div>
+              <input type="range" class="dcs-range" id="confidenceThreshold" min="40" max="95" step="5" value="70" />
+              <span class="dcs-field__helper">Lower values mean fewer scans get auto-flagged; higher values mean more get a second look.</span>
+            </div>
+
+            <div class="dcs-form-row">
+              <div class="dcs-field">
+                <label class="dcs-field__label" for="defaultXrayType">Default X-ray type</label>
+                <select class="dcs-select dcs-focus-ring" id="defaultXrayType">
+                  <option>Panoramic (OPG)</option>
+                  <option>Bitewing</option>
+                  <option>Periapical</option>
+                </select>
+              </div>
+              <div class="dcs-field">
+                <label class="dcs-field__label" for="defaultQuadrant">Default tooth quadrant</label>
+                <select class="dcs-select dcs-focus-ring" id="defaultQuadrant">
+                  <option>Full arch / Panoramic</option>
+                  <option>Upper right</option>
+                  <option>Upper left</option>
+                  <option>Lower right</option>
+                  <option>Lower left</option>
+                </select>
+              </div>
+            </div>
+            <div class="dcs-form-actions">
+              <button type="button" class="dcs-btn dcs-btn--primary dcs-focus-ring" data-save="AI preferences">Save preferences</button>
+            </div>
+          </section>
+
+          <section class="dcs-panel dcs-glass dcs-settings-section" id="clinic">
+            <div class="dcs-panel__header"><h2 class="dcs-panel__title">Clinic Information</h2></div>
+            <p class="dcs-settings-section__desc">Shown on printed and exported reports.</p>
+
+            <div class="dcs-logo-row">
+              <div class="dcs-logo-preview">
+                <img src="img/logo.png" alt="Clinic logo" />
+              </div>
+              <div>
+                <button type="button" class="dcs-btn dcs-btn--ghost dcs-focus-ring" id="replaceLogoBtn">Replace logo</button>
+                <div class="dcs-field__helper" style="margin-top:6px;">PNG with transparent background, at least 256×256px</div>
+              </div>
+            </div>
+
+            <div class="dcs-form-row">
+              <div class="dcs-field">
+                <label class="dcs-field__label" for="clinicName">Clinic / institution name</label>
+                <input class="dcs-input dcs-focus-ring" type="text" id="clinicName" value="Khyber College of Dentistry" />
+              </div>
+              <div class="dcs-field">
+                <label class="dcs-field__label" for="clinicPhone">Clinic phone</label>
+                <input class="dcs-input dcs-focus-ring" type="tel" id="clinicPhone" value="+92 91 9211440" />
+              </div>
+            </div>
+            <div class="dcs-field" style="margin-top: var(--space-3);">
+              <label class="dcs-field__label" for="clinicAddress">Address</label>
+              <input class="dcs-input dcs-focus-ring" type="text" id="clinicAddress" value="Bacha Khan Chowk, Peshawar, Khyber Pakhtunkhwa" />
+            </div>
+            <div class="dcs-form-actions">
+              <button type="button" class="dcs-btn dcs-btn--primary dcs-focus-ring" data-save="Clinic information">Save changes</button>
+            </div>
+          </section>
+
+          <section class="dcs-panel dcs-glass dcs-settings-section" id="privacy">
+            <div class="dcs-panel__header"><h2 class="dcs-panel__title">Privacy &amp; Data</h2></div>
+
+            <div class="dcs-privacy-note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              <span>Uploaded X-ray images are analyzed and are not stored afterward. Only the AI's findings, annotations, and your clinician notes are saved to a patient's record.</span>
+            </div>
+
+            <div class="dcs-form-actions" style="justify-content:flex-start; margin-bottom: var(--space-4);">
+              <button type="button" class="dcs-btn dcs-btn--secondary dcs-focus-ring" id="exportDataBtn">Export my data</button>
+            </div>
+
+            <div class="dcs-danger-zone">
+              <div class="dcs-danger-zone__title">Danger zone</div>
+              <p class="dcs-danger-zone__desc">Deleting your account permanently removes your profile and access to DeepCariesScan. Patient records remain with the clinic and are not deleted.</p>
+              <button type="button" class="dcs-btn dcs-btn--destructive dcs-focus-ring" id="deleteAccountBtn">Delete account</button>
+            </div>
+          </section>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ==================================================================
+     ACCOUNT MENU - bottom-left floating glass avatar (replaces top-right dropdown)
+     ================================================================== -->
+<div class="dcs-account-menu" id="accountMenu">
+  <button class="dcs-account-menu__trigger dcs-glass dcs-focus-ring" id="avatarBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Account menu">
+    <div class="dcs-patient-card__avatar">AT</div>
+  </button>
+  <div class="dcs-app__dropdown dcs-app__dropdown--up dcs-glass" id="avatarDropdown" hidden role="menu">
+    <div class="dcs-app__dropdown-header">
+      <div class="name">Dr. Ayesha Tariq</div>
+      <div class="role">dr.ayesha@kcd.edu.pk</div>
+    </div>
+    <a href="doctor-profile.html" class="dcs-app__dropdown-item" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Doctor Profile
+    </a>
+    <a href="settings.html" class="dcs-app__dropdown-item" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83"/></svg>
+      Settings
+    </a>
+    <a href="help.html" class="dcs-app__dropdown-item" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 2-3 4"/><path d="M12 17h.01"/></svg>
+      Help &amp; About
+    </a>
+    <button class="dcs-app__dropdown-item dcs-app__dropdown-item--danger" id="logoutItem" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+      Log Out
+    </button>
+  </div>
+</div>
+
+<!-- ==================================================================
+     FIXED GLASS PILL NAV - bottom center, all screen sizes
+     ================================================================== -->
+<nav class="dcs-pillnav dcs-glass" id="pillNav">
+  <a href="dashboard.html" class="dcs-pillnav__item dcs-focus-ring" data-page="dashboard">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    <span>Dashboard</span>
+  </a>
+  <a href="new-scan.html" class="dcs-pillnav__item dcs-focus-ring" data-page="new-scan">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+    <span>New Scan</span>
+  </a>
+  <a href="patient-history.html" class="dcs-pillnav__item dcs-focus-ring" data-page="patient-history">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <span>History</span>
+  </a>
+  <a href="settings.html" class="dcs-pillnav__item dcs-focus-ring dcs-active" data-page="settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    <span>Settings</span>
+  </a>
+</nav>
+
+<script src="js/theme.js"></script>
+<script src="js/components.js"></script>
+<script src="js/app-shell.js"></script>
+<script src="js/settings.js"></script>
+</body>
+</html>

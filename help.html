@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<script>
+  // Flash-safe theme init - runs before paint, before theme.js loads.
+  // Full toggle logic lives in js/theme.js (added in the JS pass).
+  (function () {
+    var saved = localStorage.getItem('dcs-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Help &amp; About · DeepCariesScan</title>
+<meta name="description" content="How DeepCariesScan works, frequently asked questions, the severity scale reference, and support contacts." />
+
+<link rel="icon" type="image/png" href="img/logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/app-shell.css">
+<link rel="stylesheet" href="css/dashboard.css"><!-- shared .dcs-page-header / .dcs-panel -->
+<link rel="stylesheet" href="css/settings.css"><!-- reuses .dcs-settings-nav sub-nav pattern -->
+<link rel="stylesheet" href="css/help.css">
+</head>
+<body>
+
+<div class="dcs-app dcs-app--no-sidebar">
+  <div class="dcs-app__main">
+
+    <!-- TOPBAR -->
+    <header class="dcs-app__topbar dcs-mesh">
+      <div class="dcs-app__topbar-brand">
+        <img src="img/logo.png" alt="" />
+        DeepCariesScan
+      </div>
+      <div class="dcs-navbar__disclaimer">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Diagnostic aid — not a final diagnosis
+      </div>
+      <div class="dcs-app__topbar-right">
+        <button class="dcs-theme-toggle dcs-glass dcs-focus-ring" id="themeToggle" type="button" aria-label="Toggle dark mode" aria-pressed="false">
+          <svg class="dcs-theme-toggle__icon dcs-theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="dcs-theme-toggle__icon dcs-theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="dcs-app__content dcs-fade-in">
+
+      <div class="dcs-page-header">
+        <div>
+          <h1>Help &amp; About</h1>
+          <p>How DeepCariesScan works, answers to common questions, and how to reach support.</p>
+        </div>
+      </div>
+
+      <div class="dcs-settings-grid">
+
+        <!-- Sub-nav -->
+        <nav class="dcs-settings-nav" id="helpNav" aria-label="Help sections">
+          <a href="#about" class="dcs-settings-nav__link dcs-active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            About
+          </a>
+          <a href="#how-it-works" class="dcs-settings-nav__link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+            How it works
+          </a>
+          <a href="#faq" class="dcs-settings-nav__link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 2-3 4"/><path d="M12 17h.01"/><circle cx="12" cy="12" r="10"/></svg>
+            FAQ
+          </a>
+          <a href="#severity-guide" class="dcs-settings-nav__link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Severity Guide
+          </a>
+          <a href="#contact" class="dcs-settings-nav__link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            Contact &amp; Support
+          </a>
+          <a href="#credits" class="dcs-settings-nav__link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Credits
+          </a>
+        </nav>
+
+        <!-- Sections -->
+        <div>
+
+          <section class="dcs-panel dcs-glass dcs-settings-section" id="about">
+            <div class="dcs-help-hero">
+              <img src="img/logo.png" alt="" />
+              <div>
+                <h2>About DeepCariesScan</h2>
+                <p>An AI-powered dental caries detection &amp; classification system.</p>
+                <span class="dcs-version-tag">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+                  Version 1.0.0 — Final Year Project
+                </span>
+              </div>
+            </div>
+            <p class="dcs-settings-section__desc">
+              DeepCariesScan uses a trained AI model to analyze dental X-rays and flag possible caries (cavities),
+              classifying each finding across a 5-stage severity scale — from early enamel involvement through to
+              pulp exposure. It's built to give dental practitioners a faster, more consistent second read, not to
+              replace their judgment.
+            </p>
+            <div class="dcs-privacy-note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              <span>DeepCariesScan is a diagnostic aid, not a final diagnosis. All AI findings should be confirmed by a licensed clinician before any treatment decision.</span>
+            </div>
+          </section>
+
+          <section class="dcs-panel dcs-glass dcs-settings-section" id="how-it-works">
+            <div class="dcs-panel__header"><h2 class="dcs-panel__title">How it works</h2></div>
+            <p class="dcs-settings-section__desc">Four steps from patient to report.</p>
+            <div class="dcs-steps">
+              <div class="dcs-step">
+                <div class="dcs-step__number">1</div>
+                <div class="dcs-step__title">Select a patient</div>
+                <div class="dcs-step__desc">Search an existing patient or quickly add a new one from New Scan.</div>
+              </div>
+              <div class="dcs-step">
+                <div class="dcs-step__number">2</div>
+                <div class="dcs-step__title">Upload an X-ray</div>
+                <div class="dcs-step__desc">Drag &amp; drop a JPEG or PNG — panoramic, bitewing, or periapical.</div>
+              </div>
+              <div class="dcs-step">
+                <div class="dcs-step__number">3</div>
+                <div class="dcs-step__title">Review AI results</div>
+                <div class="dcs-step__desc">See annotated lesions with severity and confidence for each finding.</div>
+              </div>
+              <div class="dcs-step">
+                <div class="dcs-step__number">4</div>
+                <div class="dcs-step__title">Save to record</div>
+                <div class="dcs-step__desc">Add clinician notes and save the scan to the patient's history.</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="dcs-panel dcs-glass dcs-settings-section" id="faq">
+            <div class="dcs-panel__header">
+              <h2 class="dcs-panel__title">Frequently asked questions</h2>
+            </div>
+
+            <details class="dcs-faq-item" open>
+              <summary>
+                Is DeepCariesScan a replacement for a dentist's diagnosis?
+                <svg class="dcs-faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </summary>
+              <div class="dcs-faq-item__answer">No. It's a diagnostic aid intended to support a licensed clinician's judgment — every finding should be clinically confirmed before any treatment decision is made.</div>
+            </details>
+
+            <details class="dcs-faq-item">
+              <summary>
+                What image formats and X-ray types are supported?
+                <svg class="dcs-faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </summary>
+              <div class="dcs-faq-item__answer">JPEG and PNG files up to 10MB. Panoramic (OPG), bitewing, and periapical X-rays are all supported.</div>
+            </details>
+
+            <details class="dcs-faq-item">
+              <summary>
+                Are my patients' X-ray images stored after analysis?
+                <svg class="dcs-faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </summary>
+              <div class="dcs-faq-item__answer">No. Uploaded images are analyzed and then discarded. Only the AI's findings, annotations, and any clinician notes you add are saved to a patient's record.</div>
+            </details>
+
+            <details class="dcs-faq-item">
+              <summary>
+                What do the severity stages mean?
+                <svg class="dcs-faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </summary>
+              <div class="dcs-faq-item__answer">DeepCariesScan classifies findings across five stages of increasing severity: Enamel, Dentin 1, Dentin 2, Dentin 3, and Pulp. See the Severity Guide section below for a full explanation of each.</div>
+            </details>
+
+            <details class="dcs-faq-item">
+              <summary>
+                Why does a scan get flagged for review?
+                <svg class="dcs-faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </summary>
+              <div class="dcs-faq-item__answer">Scans are flagged when a finding's confidence falls below your configured threshold (see Settings → AI Preferences), so it gets a second look before being finalized.</div>
+            </details>
+
+            <details class="dcs-faq-item">
+              <summary>
+                Who do I contact if something isn't working?
+                <svg class="dcs-faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </summary>
+              <div class="dcs-faq-item__answer">Use the Contact &amp; Support section below, or reach the KCD IT support desk directly.</div>
+            </details>
+          </section>
+
+          <section class="dcs-panel dcs-glass dcs-settings-section" id="severity-guide">
+            <div class="dcs-panel__header">
+              <h2 class="dcs-panel__title">Severity scale reference</h2>
+            </div>
+            <p class="dcs-settings-section__desc">The full 5-stage scale used across every scan result, from mildest to most advanced.</p>
+            <div class="dcs-sev-guide" id="severityGuideList"></div>
+          </section>
+
+          <section class="dcs-panel dcs-glass dcs-settings-section" id="contact">
+            <div class="dcs-panel__header"><h2 class="dcs-panel__title">Contact &amp; support</h2></div>
+
+            <div class="dcs-support-cards">
+              <div class="dcs-support-card">
+                <span class="dcs-support-card__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+                </span>
+                <div>
+                  <div class="dcs-support-card__title">Email support</div>
+                  <div class="dcs-support-card__value">support@deepcariesscan.kcd.edu.pk</div>
+                </div>
+              </div>
+              <div class="dcs-support-card">
+                <span class="dcs-support-card__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                </span>
+                <div>
+                  <div class="dcs-support-card__title">IT help desk</div>
+                  <div class="dcs-support-card__value">+92 91 9211440 (ext. 220)</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="dcs-field">
+              <label class="dcs-field__label" for="supportSubject">Subject</label>
+              <select class="dcs-select dcs-focus-ring" id="supportSubject">
+                <option>Technical issue</option>
+                <option>Feature request</option>
+                <option>Question about a result</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="dcs-field" style="margin-top: var(--space-3);">
+              <label class="dcs-field__label" for="supportMessage">Message</label>
+              <textarea class="dcs-textarea dcs-focus-ring" id="supportMessage" placeholder="Describe the issue or question…"></textarea>
+            </div>
+            <div class="dcs-form-actions">
+              <button type="button" class="dcs-btn dcs-btn--primary dcs-focus-ring" id="sendSupportBtn">Send message</button>
+            </div>
+          </section>
+
+          <section class="dcs-panel dcs-glass dcs-settings-section" id="credits">
+            <div class="dcs-panel__header"><h2 class="dcs-panel__title">Credits</h2></div>
+            <div class="dcs-credits-row"><span class="dcs-credits-row__label">Project</span><span class="dcs-credits-row__value">DeepCariesScan</span></div>
+            <div class="dcs-credits-row"><span class="dcs-credits-row__label">Institution</span><span class="dcs-credits-row__value">Khyber College of Dentistry</span></div>
+            <div class="dcs-credits-row"><span class="dcs-credits-row__label">Type</span><span class="dcs-credits-row__value">Final Year Project (FYP)</span></div>
+            <div class="dcs-credits-row"><span class="dcs-credits-row__label">Version</span><span class="dcs-credits-row__value">1.0.0</span></div>
+            <div class="dcs-credits-row"><span class="dcs-credits-row__label">Last updated</span><span class="dcs-credits-row__value">11 Jul 2026</span></div>
+          </section>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ==================================================================
+     ACCOUNT MENU - bottom-left floating glass avatar (replaces top-right dropdown)
+     ================================================================== -->
+<div class="dcs-account-menu" id="accountMenu">
+  <button class="dcs-account-menu__trigger dcs-glass dcs-focus-ring" id="avatarBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Account menu">
+    <div class="dcs-patient-card__avatar">AT</div>
+  </button>
+  <div class="dcs-app__dropdown dcs-app__dropdown--up dcs-glass" id="avatarDropdown" hidden role="menu">
+    <div class="dcs-app__dropdown-header">
+      <div class="name">Dr. Ayesha Tariq</div>
+      <div class="role">dr.ayesha@kcd.edu.pk</div>
+    </div>
+    <a href="doctor-profile.html" class="dcs-app__dropdown-item" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Doctor Profile
+    </a>
+    <a href="settings.html" class="dcs-app__dropdown-item" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83"/></svg>
+      Settings
+    </a>
+    <a href="help.html" class="dcs-app__dropdown-item" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 2-3 4"/><path d="M12 17h.01"/></svg>
+      Help &amp; About
+    </a>
+    <button class="dcs-app__dropdown-item dcs-app__dropdown-item--danger" id="logoutItem" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+      Log Out
+    </button>
+  </div>
+</div>
+
+<!-- ==================================================================
+     FIXED GLASS PILL NAV - bottom center, all screen sizes
+     ================================================================== -->
+<nav class="dcs-pillnav dcs-glass" id="pillNav">
+  <a href="dashboard.html" class="dcs-pillnav__item dcs-focus-ring" data-page="dashboard">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    <span>Dashboard</span>
+  </a>
+  <a href="new-scan.html" class="dcs-pillnav__item dcs-focus-ring" data-page="new-scan">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+    <span>New Scan</span>
+  </a>
+  <a href="patient-history.html" class="dcs-pillnav__item dcs-focus-ring" data-page="patient-history">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <span>History</span>
+  </a>
+  <a href="settings.html" class="dcs-pillnav__item dcs-focus-ring" data-page="settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    <span>Settings</span>
+  </a>
+</nav>
+
+<script src="js/theme.js"></script>
+<script src="js/components.js"></script>
+<script src="js/app-shell.js"></script>
+<script src="js/help.js"></script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<script>
+  // Flash-safe theme init - runs before paint, before theme.js loads.
+  // Full toggle logic lives in js/theme.js (added in the JS pass).
+  (function () {
+    var saved = localStorage.getItem('dcs-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sign In · DeepCariesScan</title>
+<meta name="description" content="DeepCariesScan — AI-powered dental caries detection and classification. Sign in to your clinician account." />
+
+<link rel="icon" type="image/png" href="img/logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Shared component tokens/styles — Design_Bible.md §6/§7/§9/§12 -->
+<link rel="stylesheet" href="css/components.css">
+<!-- Page-specific styles for Login only -->
+<link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+
+<div class="dcs-login dcs-fade-in">
+
+  <button class="dcs-theme-toggle dcs-glass dcs-focus-ring dcs-login__theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode" aria-pressed="false">
+    <svg class="dcs-theme-toggle__icon dcs-theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    <svg class="dcs-theme-toggle__icon dcs-theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+
+  <!-- ==================================================================
+       LEFT — BRAND / TRUST PANEL
+       ================================================================== -->
+  <section class="dcs-login__brand dcs-mesh" aria-hidden="false">
+
+    <div class="dcs-login__brand-top">
+      <div class="dcs-login__logo-row">
+        <img src="img/logo.png" alt="DeepCariesScan logo" />
+        <div class="dcs-login__wordmark">
+          DeepCariesScan
+          <span>Clinical AI · KCD</span>
+        </div>
+      </div>
+
+      <!-- Compact disclaimer badge shown only on narrow screens where the
+           full trust panel below is hidden — disclaimer must stay visible (§11) -->
+      <div class="dcs-login__brand-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Diagnostic aid only
+      </div>
+    </div>
+
+    <div class="dcs-login__brand-mid">
+      <h1 class="dcs-login__headline">A faster, more consistent <em>second read</em> on every X-ray.</h1>
+      <p class="dcs-login__subcopy">Sign in to detect and classify dental caries across all five clinical stages — from early enamel involvement to pulp exposure — in seconds.</p>
+
+      <ul class="dcs-login__feature-list">
+        <li class="dcs-login__feature">
+          <span class="dcs-login__feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+          </span>
+          <span><strong>Instant analysis</strong> — upload an X-ray and get bounding-box results in seconds.</span>
+        </li>
+        <li class="dcs-login__feature">
+          <span class="dcs-login__feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </span>
+          <span><strong>5-stage severity scale</strong> — Enamel, Dentin 1–3, and Pulp exposure, clearly labeled.</span>
+        </li>
+        <li class="dcs-login__feature">
+          <span class="dcs-login__feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </span>
+          <span><strong>Confidence scores</strong> shown for every detected lesion, never hidden.</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="dcs-login__brand-bottom">
+      <div class="dcs-login__disclaimer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <span><strong>Diagnostic aid, not a diagnosis.</strong> DeepCariesScan supports clinical judgment — it does not replace it. Uploaded images are not stored after analysis.</span>
+      </div>
+      <div class="dcs-login__clinic-tag">Built for Khyber College of Dentistry · Final Year Project</div>
+    </div>
+
+  </section>
+
+  <!-- ==================================================================
+       RIGHT — LOGIN FORM
+       ================================================================== -->
+  <section class="dcs-login__form-panel">
+    <div class="dcs-login__form-wrap dcs-glass">
+
+      <div class="dcs-login__form-header">
+        <h1>Welcome back</h1>
+        <p>Sign in with your clinician account to continue.</p>
+      </div>
+
+      <form class="dcs-login__form" id="loginForm" novalidate>
+
+        <div class="dcs-field" id="emailField">
+          <label class="dcs-field__label" for="email">Email or username</label>
+          <input
+            class="dcs-input dcs-focus-ring"
+            type="text"
+            id="email"
+            name="email"
+            placeholder="e.g., dr.hafsa@kcd.edu.pk"
+            autocomplete="username"
+            required
+          />
+          <span class="dcs-field__error" id="emailError" hidden>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+            Enter your email or username
+          </span>
+        </div>
+
+        <div class="dcs-field" id="passwordField">
+          <label class="dcs-field__label" for="password">Password</label>
+          <div class="dcs-login__password-wrap">
+            <input
+              class="dcs-input dcs-focus-ring"
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              required
+            />
+            <button type="button" class="dcs-login__toggle-visibility dcs-focus-ring" id="togglePassword" aria-label="Show password" aria-pressed="false">
+              <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <span class="dcs-field__error" id="passwordError" hidden>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+            Enter your password
+          </span>
+        </div>
+
+        <div class="dcs-login__row">
+          <label class="dcs-login__remember">
+            <input type="checkbox" id="remember" name="remember" />
+            Remember me
+          </label>
+          <a href="#" class="dcs-login__forgot" id="forgotLink">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="dcs-btn dcs-btn--primary dcs-login__submit dcs-focus-ring" id="submitBtn">
+          <span class="dcs-spinner" aria-hidden="true"></span>
+          <span class="dcs-login__submit-label">Sign In</span>
+        </button>
+
+        <div class="dcs-login__divider">or</div>
+
+        <button type="button" class="dcs-btn dcs-btn--secondary dcs-login__demo-btn dcs-focus-ring" id="demoBtn">
+          Use demo clinician account
+        </button>
+      </form>
+
+      <div class="dcs-login__footer">
+        <div>Don't have an account? <a href="#">Contact your clinic administrator</a></div>
+        <div>© 2026 DeepCariesScan · <a href="help.html">Help &amp; About</a></div>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+
+<script src="js/theme.js"></script>
+<script src="js/components.js"></script>
+<script src="js/login.js"></script>
+</body>
+</html>

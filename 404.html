@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<script>
+  // Flash-safe theme init - runs before paint, before theme.js loads.
+  // Full toggle logic lives in js/theme.js (added in the JS pass).
+  (function () {
+    var saved = localStorage.getItem('dcs-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Page Not Found · DeepCariesScan</title>
+<meta name="description" content="The page you're looking for couldn't be found." />
+
+<link rel="icon" type="image/png" href="img/logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/error.css">
+</head>
+<body>
+
+<div class="dcs-error-page dcs-fade-in">
+
+  <header class="dcs-error-header dcs-mesh">
+    <img src="img/logo.png" alt="" />
+    <span>DeepCariesScan</span>
+    <button class="dcs-theme-toggle dcs-glass dcs-focus-ring" id="themeToggle" type="button" aria-label="Toggle dark mode" aria-pressed="false" style="margin-left:auto;">
+      <svg class="dcs-theme-toggle__icon dcs-theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      <svg class="dcs-theme-toggle__icon dcs-theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </header>
+
+  <main class="dcs-error-main">
+    <div class="dcs-error-card dcs-glass">
+
+      <svg class="dcs-error-mascot" id="errorMascot" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle id="mascotGlow" cx="32" cy="32" r="29" stroke="var(--icy-mint)" stroke-width="1.5" opacity="0.5" fill="none"/>
+        <rect id="mascotFace" x="12" y="14" width="40" height="36" rx="14" fill="var(--clinical-teal)"/>
+        <circle cx="24" cy="32" r="4" fill="#0F172A"/>
+        <circle cx="40" cy="32" r="4" fill="#0F172A"/>
+        <path id="browLeft" d="M18 22l10 4" stroke="#0F172A" stroke-width="2.5" stroke-linecap="round"/>
+        <path id="browRight" d="M36 26l10-4" stroke="#0F172A" stroke-width="2.5" stroke-linecap="round"/>
+        <path id="mascotMouth" d="M25 41q7 4 14 0" stroke="#0F172A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <rect x="28" y="6" width="8" height="8" rx="2" fill="var(--icy-mint)"/>
+      </svg>
+
+      <div class="dcs-error-code" id="errorCode">404</div>
+      <h1 class="dcs-error-title" id="errorTitle">Page not found</h1>
+      <p class="dcs-error-desc" id="errorDesc">
+        The page you're looking for doesn't exist, may have moved, or the link might be outdated.
+      </p>
+
+      <div class="dcs-field dcs-error-search" id="errorSearch">
+        <label class="dcs-field__label" for="errorSearchInput">Try searching for a patient instead</label>
+        <input class="dcs-input dcs-focus-ring" type="text" id="errorSearchInput" placeholder="Search by patient name or ID…" />
+      </div>
+
+      <div class="dcs-error-actions">
+        <a href="dashboard.html" class="dcs-btn dcs-btn--primary dcs-focus-ring" id="primaryActionBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Back to Dashboard
+        </a>
+        <button type="button" class="dcs-btn dcs-btn--ghost dcs-focus-ring" id="goBackBtn">Go back</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Demo convenience: preview all error states from this one file -->
+  <div class="dcs-error-demo-switch">
+    <span class="dcs-error-demo-switch__label">Preview:</span>
+    <button type="button" data-code="404" class="dcs-active">404 · Not Found</button>
+    <button type="button" data-code="403">403 · Forbidden</button>
+    <button type="button" data-code="500">500 · Server Error</button>
+    <button type="button" data-code="offline">Offline</button>
+  </div>
+
+  <footer class="dcs-error-footer">
+    Need help? Visit <a href="help.html">Help &amp; About</a> or <a href="help.html#contact">contact support</a>.
+    <div style="margin-top:4px;">© 2026 DeepCariesScan · Khyber College of Dentistry</div>
+  </footer>
+
+</div>
+
+<script src="js/theme.js"></script>
+<script src="js/components.js"></script>
+<script src="js/error.js"></script>
+</body>
+</html>

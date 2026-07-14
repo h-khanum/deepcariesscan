@@ -1,0 +1,328 @@
+/* ==========================================================================
+   DeepCariesScan — AI Analysis / Report View (page-specific styles)
+   This is the "report view" screen referenced in Design Bible §5 — distinct
+   layout from the 3-column workspace, same visual system (§4/§6/§8).
+   Loads after components.css + app-shell.css.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   PATIENT CONTEXT BANNER
+   -------------------------------------------------------------------------- */
+.dcs-report-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-resting);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.dcs-report-banner__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-decoration: none;
+  margin-bottom: var(--space-2);
+}
+.dcs-report-banner__back:hover { color: var(--clinical-teal); }
+.dcs-report-banner__back svg { width: 16px; height: 16px; }
+
+.dcs-report-banner__patient {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.dcs-report-banner__patient .dcs-patient-card__avatar {
+  width: 48px;
+  height: 48px;
+  font-size: var(--text-small);
+}
+
+.dcs-report-banner__name {
+  font-size: var(--text-h3);
+  font-weight: 700;
+  color: #fff;
+}
+
+.dcs-report-banner__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  font-size: var(--text-micro);
+  color: #94A3B8;
+}
+
+.dcs-report-banner__meta strong { color: #E2E8F0; font-weight: 600; }
+
+.dcs-report-banner__actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.dcs-report-banner__actions .dcs-btn--secondary {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.3);
+  color: #fff;
+}
+.dcs-report-banner__actions .dcs-btn--secondary:hover { background: rgba(255,255,255,0.18); }
+.dcs-report-banner__actions .dcs-btn--ghost { color: #E2E8F0; }
+.dcs-report-banner__actions .dcs-btn--ghost:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+/* --------------------------------------------------------------------------
+   MAIN GRID — viewer (large) + sidebar (findings)
+   -------------------------------------------------------------------------- */
+.dcs-report-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+/* --------------------------------------------------------------------------
+   IMAGE VIEWER
+   -------------------------------------------------------------------------- */
+.dcs-viewer-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.dcs-viewer-zoom {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.dcs-viewer-zoom .dcs-btn {
+  padding: 0 var(--space-2);
+  min-width: 40px;
+}
+
+.dcs-viewer-zoom__value {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 48px;
+  text-align: center;
+}
+
+.dcs-viewer-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-small);
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.dcs-viewer-toggle input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--clinical-teal);
+  cursor: pointer;
+}
+
+.dcs-viewer-frame {
+  position: relative;
+  overflow: auto;
+  border-radius: var(--radius-input);
+  border: 1px solid var(--border-default);
+  background: #0b0f16;
+  max-height: 640px;
+}
+
+.dcs-viewer-frame__inner {
+  position: relative;
+  display: inline-block;
+  transform-origin: top left;
+  transition: transform 200ms ease-out;
+  line-height: 0;
+}
+
+.dcs-viewer-frame__inner img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.dcs-bbox {
+  position: absolute;
+  border: 2px solid var(--severity-e);
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.35);
+  transition: opacity 150ms ease;
+}
+
+.dcs-bbox.dcs-bbox--hidden { opacity: 0; pointer-events: none; }
+
+.dcs-bbox__label {
+  position: absolute;
+  top: -20px;
+  left: -2px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px 4px 4px 0;
+  white-space: nowrap;
+  background: var(--severity-e);
+}
+
+/* Severity legend */
+.dcs-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-default);
+}
+
+.dcs-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-micro);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.dcs-legend__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   SIDEBAR — summary + full lesion breakdown
+   -------------------------------------------------------------------------- */
+.dcs-report-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.dcs-report-stat {
+  background: var(--clinical-white);
+  border-radius: var(--radius-input);
+  padding: var(--space-3);
+}
+
+.dcs-report-stat__label {
+  font-size: var(--text-micro);
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.dcs-report-stat__value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 2px;
+}
+
+.dcs-finding-card {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-input);
+  padding: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.dcs-finding-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.dcs-finding-card__title {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.dcs-finding-card__location {
+  font-size: var(--text-micro);
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: var(--space-2);
+}
+
+.dcs-finding-card__confidence {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.dcs-finding-card__note {
+  font-size: var(--text-micro);
+  color: var(--text-secondary);
+  background: var(--clinical-teal-tint);
+  border-radius: 6px;
+  padding: var(--space-2);
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.dcs-finding-card__note svg { width: 13px; height: 13px; flex-shrink: 0; margin-top: 1px; color: var(--clinical-teal-dark); }
+
+/* --------------------------------------------------------------------------
+   NOTES + REPORT ACTIONS
+   -------------------------------------------------------------------------- */
+.dcs-report-notes {
+  margin-top: var(--space-4);
+}
+
+.dcs-report-footer-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-top: var(--space-4);
+}
+
+.dcs-report-footer-actions .dcs-btn { flex: 1; min-width: 160px; }
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE
+   -------------------------------------------------------------------------- */
+@media (max-width: 1180px) {
+  .dcs-report-grid { grid-template-columns: 1fr; }
+  .dcs-viewer-frame { max-height: 420px; }
+}
+
+@media (max-width: 640px) {
+  .dcs-report-banner { flex-direction: column; align-items: flex-start; }
+  .dcs-report-banner__actions { width: 100%; }
+  .dcs-report-banner__actions .dcs-btn { flex: 1; }
+}
+
+/* --------------------------------------------------------------------------
+   PRINT — clean report, no chrome (used by "Print Report" action)
+   -------------------------------------------------------------------------- */
+@media print {
+  .dcs-pillnav, .dcs-account-menu, .dcs-app__topbar, .dcs-theme-toggle,
+  .dcs-report-banner__actions, .dcs-viewer-toolbar,
+  .dcs-report-footer-actions, .dcs-app__dropdown { display: none !important; }
+  .dcs-app__content { padding: 0 !important; }
+  .dcs-report-grid { grid-template-columns: 1fr !important; }
+  .dcs-viewer-frame { max-height: none !important; overflow: visible !important; border: none !important; }
+  body { background: #fff !important; }
+}

@@ -1,0 +1,127 @@
+/* ==========================================================================
+   DeepCariesScan — Patient History (page-specific styles)
+   Archive/browse screen (Design Bible §5 — "may use different layouts,
+   same visual system"). Loads after components.css + app-shell.css.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   FILTER TOOLBAR
+   -------------------------------------------------------------------------- */
+.dcs-filter-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-4);
+}
+
+.dcs-filter-bar .dcs-field {
+  margin: 0;
+}
+
+.dcs-filter-bar__search {
+  flex: 1 1 240px;
+  min-width: 200px;
+}
+
+.dcs-filter-bar__select {
+  width: 170px;
+}
+
+.dcs-filter-bar__reset {
+  height: 44px;
+}
+
+/* --------------------------------------------------------------------------
+   RESULTS META
+   -------------------------------------------------------------------------- */
+.dcs-results-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+  font-size: var(--text-small);
+  color: var(--text-secondary);
+}
+
+.dcs-results-meta strong { color: var(--text-primary); }
+
+/* --------------------------------------------------------------------------
+   TABLE (extends dashboard's .dcs-table look, patient-history specifics)
+   -------------------------------------------------------------------------- */
+.dcs-table-wrap { overflow-x: auto; }
+
+.dcs-table th[data-sortable] {
+  cursor: pointer;
+  user-select: none;
+}
+.dcs-table th[data-sortable]:hover { color: var(--clinical-teal-dark); }
+
+.dcs-history-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-3);
+  padding: var(--space-6, 48px) var(--space-4);
+  color: var(--text-muted);
+}
+.dcs-history-empty[hidden] { display: none; }
+.dcs-history-empty svg { width: 48px; height: 48px; color: var(--border-strong); }
+.dcs-history-empty p { margin: 0; font-size: var(--text-small); max-width: 280px; }
+
+/* --------------------------------------------------------------------------
+   PAGINATION
+   -------------------------------------------------------------------------- */
+.dcs-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--space-4);
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.dcs-pagination__info {
+  font-size: var(--text-micro);
+  color: var(--text-muted);
+}
+
+.dcs-pagination__pages {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dcs-pagination__page-btn {
+  min-width: 36px;
+  height: 36px;
+  border-radius: var(--radius-input);
+  border: 1px solid var(--border-default);
+  background: var(--surface-white);
+  color: var(--text-secondary);
+  font-size: var(--text-small);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dcs-pagination__page-btn:hover { border-color: var(--clinical-teal); color: var(--clinical-teal-dark); }
+.dcs-pagination__page-btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+.dcs-pagination__page-btn.dcs-active {
+  background: var(--clinical-teal);
+  border-color: var(--clinical-teal);
+  color: #fff;
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE
+   -------------------------------------------------------------------------- */
+@media (max-width: 720px) {
+  .dcs-filter-bar__select { width: 100%; }
+  .dcs-filter-bar { flex-direction: column; align-items: stretch; }
+  .dcs-filter-bar__reset { width: 100%; }
+  .dcs-results-meta { flex-direction: column; align-items: flex-start; gap: 4px; }
+}

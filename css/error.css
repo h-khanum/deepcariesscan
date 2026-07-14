@@ -1,0 +1,152 @@
+/* ==========================================================================
+   DeepCariesScan — 404 / Error page (standalone, no app shell)
+   Loads after components.css only — this page intentionally skips
+   app-shell.css since it may be shown to signed-out users too.
+   ========================================================================== */
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-family);
+  background: var(--page-bg);
+  color: var(--text-primary);
+}
+
+.dcs-error-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --------------------------------------------------------------------------
+   MINI HEADER (just brand — no nav, since auth state is unknown here)
+   -------------------------------------------------------------------------- */
+.dcs-error-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border-radius: 0 0 var(--radius-card) var(--radius-card);
+}
+
+.dcs-error-header img { width: 26px; height: 26px; }
+.dcs-error-header span {
+  font-size: var(--text-h3);
+  font-weight: 700;
+  color: #fff;
+}
+
+/* --------------------------------------------------------------------------
+   CENTERED CONTENT
+   -------------------------------------------------------------------------- */
+.dcs-error-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+.dcs-error-card {
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
+  padding: var(--space-6) var(--space-5);
+  border-radius: var(--radius-card);
+}
+
+.dcs-error-mascot {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto var(--space-4);
+}
+
+.dcs-error-code {
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 1;
+  margin: 0 0 var(--space-2);
+  transition: color var(--transition-standard);
+}
+
+.dcs-error-title {
+  font-size: var(--text-h2, 24px);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-2);
+}
+
+.dcs-error-desc {
+  font-size: var(--text-small);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0 0 var(--space-5);
+}
+
+.dcs-error-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
+}
+
+.dcs-error-search {
+  max-width: 360px;
+  margin: 0 auto var(--space-5);
+  text-align: left;
+}
+
+.dcs-error-search[hidden] { display: none; }
+
+/* --------------------------------------------------------------------------
+   FOOTER
+   -------------------------------------------------------------------------- */
+.dcs-error-footer {
+  padding: var(--space-4);
+  text-align: center;
+  font-size: var(--text-micro);
+  color: var(--text-muted);
+}
+
+.dcs-error-footer a { color: var(--text-secondary); font-weight: 600; text-decoration: none; }
+.dcs-error-footer a:hover { color: var(--clinical-teal); }
+
+/* --------------------------------------------------------------------------
+   DEMO STATE SWITCHER — for reviewing all error states from one file.
+   Clearly a development/demo convenience, styled subtly out of the way.
+   -------------------------------------------------------------------------- */
+.dcs-error-demo-switch {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding-bottom: var(--space-4);
+}
+
+.dcs-error-demo-switch button {
+  font-size: var(--text-micro);
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-pill);
+  padding: 4px 12px;
+  cursor: pointer;
+}
+.dcs-error-demo-switch button:hover { border-color: var(--clinical-teal); color: var(--clinical-teal-dark); }
+.dcs-error-demo-switch button.dcs-active { background: var(--clinical-teal); border-color: var(--clinical-teal); color: #fff; }
+.dcs-error-demo-switch__label {
+  font-size: var(--text-micro);
+  color: var(--border-strong);
+  margin-right: 4px;
+  align-self: center;
+}
+
+@media (max-width: 480px) {
+  .dcs-error-code { font-size: 48px; }
+  .dcs-error-actions { flex-direction: column; }
+  .dcs-error-actions .dcs-btn { width: 100%; }
+}

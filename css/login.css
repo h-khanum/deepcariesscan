@@ -1,0 +1,374 @@
+/* ==========================================================================
+   DeepCariesScan — Login Page (page-specific styles)
+   Loads AFTER components.css so tokens are already available.
+   Every value traces back to Design_Bible.md — no one-off colors/spacing.
+   ========================================================================== */
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-family);
+  background: var(--page-bg);
+  color: var(--text-primary);
+}
+
+.dcs-login {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  min-height: 100vh;
+}
+
+/* --------------------------------------------------------------------------
+   BRAND PANEL (left) — dark, futuristic, the one place warmth/mascot energy
+   is allowed to show per §4 / §8.
+   -------------------------------------------------------------------------- */
+.dcs-login__brand {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--space-6) var(--space-6) var(--space-5);
+  color: #E2E8F0;
+  overflow: hidden;
+}
+
+.dcs-login__brand-top,
+.dcs-login__brand-mid,
+.dcs-login__brand-bottom {
+  position: relative;
+  z-index: 1;
+}
+
+.dcs-login__logo-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.dcs-login__logo-row img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 16px rgba(34, 211, 238, 0.45));
+}
+
+.dcs-login__wordmark {
+  font-size: var(--text-h3);
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+
+.dcs-login__wordmark span {
+  display: block;
+  font-size: var(--text-micro);
+  font-weight: 500;
+  color: var(--icy-mint);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.dcs-login__brand-mid {
+  max-width: 420px;
+}
+
+.dcs-login__headline {
+  font-size: 30px;
+  line-height: 1.25;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 var(--space-3);
+}
+
+.dcs-login__headline em {
+  font-style: normal;
+  color: var(--icy-mint);
+}
+
+.dcs-login__subcopy {
+  font-size: var(--text-body);
+  line-height: 1.5;
+  color: #94A3B8;
+  margin: 0 0 var(--space-5);
+}
+
+.dcs-login__feature-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.dcs-login__feature {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: var(--text-small);
+  color: #CBD5E1;
+}
+
+.dcs-login__feature-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-input);
+  background: rgba(94, 234, 212, 0.12);
+  border: 1px solid rgba(94, 234, 212, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--icy-mint);
+}
+
+.dcs-login__feature-icon svg { width: 16px; height: 16px; }
+
+.dcs-login__feature strong { color: #fff; font-weight: 600; }
+
+/* Trust disclaimer — must always be visible somewhere per §11 */
+.dcs-login__disclaimer {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-input);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  font-size: var(--text-micro);
+  color: #94A3B8;
+  max-width: 420px;
+}
+
+.dcs-login__disclaimer svg {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: var(--icy-mint);
+  margin-top: 1px;
+}
+
+.dcs-login__disclaimer strong { color: #E2E8F0; font-weight: 600; }
+
+.dcs-login__clinic-tag {
+  font-size: var(--text-micro);
+  color: #64748B;
+  margin-top: var(--space-3);
+}
+
+/* --------------------------------------------------------------------------
+   FORM PANEL (right)
+   -------------------------------------------------------------------------- */
+.dcs-login__form-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+  background: var(--page-bg);
+}
+
+.dcs-login__form-wrap {
+  width: 100%;
+  max-width: 400px;
+  padding: var(--space-5);
+  border-radius: var(--radius-card);
+}
+
+.dcs-login__form-header {
+  margin-bottom: var(--space-5);
+}
+
+.dcs-login__form-header h1 {
+  font-size: var(--text-h1);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-1);
+}
+
+.dcs-login__form-header p {
+  font-size: var(--text-small);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.dcs-login__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.dcs-login__password-wrap {
+  position: relative;
+}
+
+.dcs-login__password-wrap .dcs-input {
+  padding-right: 44px;
+}
+
+.dcs-login__toggle-visibility {
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: var(--radius-input);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dcs-login__toggle-visibility:hover { color: var(--clinical-teal); background: var(--clinical-teal-tint); }
+.dcs-login__toggle-visibility svg { width: 18px; height: 18px; }
+
+.dcs-login__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: -4px;
+}
+
+.dcs-login__remember {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-small);
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.dcs-login__remember input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--clinical-teal);
+  cursor: pointer;
+}
+
+.dcs-login__forgot {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--clinical-teal);
+  text-decoration: none;
+}
+
+.dcs-login__forgot:hover { text-decoration: underline; }
+
+.dcs-login__submit {
+  width: 100%;
+  margin-top: var(--space-1);
+}
+
+.dcs-login__submit .dcs-spinner {
+  width: 18px;
+  height: 18px;
+  border-width: 2px;
+  border-color: rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  display: none;
+}
+
+.dcs-login__submit.dcs-loading .dcs-spinner { display: inline-block; }
+.dcs-login__submit.dcs-loading .dcs-login__submit-label { opacity: 0.85; }
+
+.dcs-login__divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--text-muted);
+  font-size: var(--text-micro);
+  margin: var(--space-1) 0;
+}
+
+.dcs-login__divider::before,
+.dcs-login__divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border-default);
+}
+
+.dcs-login__demo-btn {
+  width: 100%;
+}
+
+.dcs-login__footer {
+  margin-top: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: var(--text-micro);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.dcs-login__footer a {
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.dcs-login__footer a:hover { color: var(--clinical-teal); }
+
+.dcs-login__mobile-disclaimer {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE — collapse to single column, brand panel becomes a compact banner
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .dcs-login {
+    grid-template-columns: 1fr;
+  }
+
+  .dcs-login__brand {
+    padding: var(--space-4) var(--space-4) var(--space-3);
+  }
+
+  .dcs-login__brand-mid { display: none; }
+  .dcs-login__brand-bottom .dcs-login__disclaimer { display: none; }
+  .dcs-login__brand-bottom .dcs-login__clinic-tag { display: none; }
+
+  .dcs-login__brand-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .dcs-login__brand-badge {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--text-micro);
+    color: var(--icy-mint);
+    background: rgba(94, 234, 212, 0.12);
+    border: 1px solid rgba(94, 234, 212, 0.25);
+    border-radius: var(--radius-pill);
+    padding: var(--space-1) var(--space-2);
+  }
+
+  .dcs-login__brand-badge svg { width: 12px; height: 12px; }
+
+  .dcs-login__form-panel {
+    padding: var(--space-4);
+  }
+}
+
+@media (min-width: 901px) {
+  .dcs-login__brand-badge { display: none; }
+}
+
+@media (max-width: 480px) {
+  .dcs-login__form-header h1 { font-size: 26px; }
+  .dcs-login__form-wrap { padding: var(--space-4); }
+}

@@ -1,0 +1,1190 @@
+/* ==========================================================================
+   DeepCariesScan — Reusable Component Library (CSS)
+   Every value here traces back to DeepCariesScan_Design_Bible.md.
+   Class names are prefixed "dcs-" to avoid colliding with existing style.css.
+   Drop this file in /static/ and link it in base.html BEFORE style.css,
+   so page-specific overrides in style.css still win when needed.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. DESIGN TOKENS  (Design Bible §6 Color, §7 Typography, §9 Spacing/Radius/Shadow)
+   -------------------------------------------------------------------------- */
+:root {
+  /* Brand / chrome colors — §6.1 */
+  --clinical-teal: #0D9488;
+  --clinical-teal-dark: #0B7A6F;
+  --clinical-teal-tint: #E6F5F3;
+  --icy-blue: #38BDF8;
+  --icy-mint: #5EEAD4;
+  --cyan: #22D3EE;
+  --primary-dark: #0F172A;
+  --clinical-white: #F8FAFC;
+  --surface-white: #FFFFFF;
+
+  /* Dedicated flat page background (distinct from --clinical-teal-tint,
+     which is also used for small element tints like badges). Light mode:
+     same pastel mint. Dark mode overrides this to a solid neutral
+     charcoal instead of a translucent teal wash — see dark block below. */
+  --page-bg: var(--clinical-teal-tint);
+
+  /* System feedback — §6.1 */
+  --success: #10B981;
+  --success-tint: #E7F9F3;
+  --warning: #F59E0B;
+  --warning-tint: #FEF6E7;
+  --error: #DC2626;
+  --error-tint: #FDECEC;
+  --info-tint: rgba(56, 189, 248, 0.14);
+
+  /* Severity scale, 5 steps — §6.2
+     d1/d3 are proposed resolutions to the open decision log; update here
+     if the team finalizes different hex values, and this cascades everywhere. */
+  --severity-e: #0D9488;   /* Enamel — calm teal */
+  --severity-d1: #FBBF24;  /* Dentin 1 — light amber */
+  --severity-d2: #F59E0B;  /* Dentin 2 — amber */
+  --severity-d3: #F97316;  /* Dentin 3 — amber-to-red */
+  --severity-p:  #DC2626;  /* Pulp — red/coral */
+
+  /* Text & structural neutrals */
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+  --border-default: #E2E8F0;
+  --border-strong: #CBD5E1;
+
+  /* Typography — §7 (slightly reduced from the original 32/24/20/16/14/12 scale
+     for a denser, more clinical-dashboard feel) */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --text-h1: 26px;
+  --text-h2: 20px;
+  --text-h3: 17px;
+  --text-body: 14px;
+  --text-small: 12px;
+  --text-micro: 10px;
+
+  /* Spacing — 8px grid, §9.1 */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+
+  /* Radius — §9.2 */
+  --radius-card: 16px;
+  --radius-button: 10px;
+  --radius-input: 8px;
+  --radius-pill: 999px;
+
+  /* Shadows — §9.3 */
+  --shadow-resting: 0 4px 20px rgba(15, 23, 42, 0.08);
+  --shadow-hover: 0 8px 30px rgba(15, 23, 42, 0.12);
+
+  /* Motion — §10.2 */
+  --transition-fast: 150ms ease-in-out;
+  --transition-standard: 200ms ease-in-out;
+
+  /* Click target minimum — §13 Accessibility */
+  --tap-target-min: 44px;
+
+  /* Glassmorphism — §9.3, accent surfaces only (panels/cards/nav/dropdown) */
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-bg-strong: rgba(255, 255, 255, 0.78);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-blur: 16px;
+  --glass-shadow: 0 8px 32px rgba(15, 23, 42, 0.10);
+
+  /* Gradient mesh — dark-surface accent echoing the logo's cyan network look */
+  --mesh-surface: var(--primary-dark);
+  --mesh-glow-1: rgba(94, 234, 212, 0.20);
+  --mesh-glow-2: rgba(56, 189, 248, 0.18);
+  --mesh-glow-3: rgba(34, 211, 238, 0.14);
+  --mesh-grid-line: rgba(94, 234, 212, 0.07);
+
+  /* Smoother, slightly longer transitions for page/section fades + state changes */
+  --transition-smooth: 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-page: 380ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* "On-tint" text colors — for text sitting on a light tinted background
+     (badges, stat-card icons, medical tags). These flip in dark mode below
+     since the same tints become translucent dark-surface overlays there,
+     which would otherwise leave dark-on-dark text with poor contrast. */
+  --on-warning-tint-d1: #92600A;
+  --on-warning-tint-d2: #92400E;
+  --on-warning-tint-d3: #9A3412;
+  --on-info-tint: #0369A1;
+
+  /* Base color that severity/status badge chips mix toward — white in light
+     mode (pale chip), a dark surface tone in dark mode (so chips stay
+     genuinely dark instead of always rendering pale regardless of theme). */
+  --tint-mix-base: white;
+}
+
+/* --------------------------------------------------------------------------
+   DARK MODE — toggled via data-theme="dark" on <html>, set by js/theme.js
+   and the flash-safe inline script in each page's <head>. Every component
+   below reads these same tokens, so dark mode requires no per-component
+   overrides beyond this block plus a few glass/mesh tweaks further down.
+   -------------------------------------------------------------------------- */
+[data-theme="dark"] {
+  /* Neutral charcoal, not navy — the old #0B1220/#111A2E read as "dark blue"
+     because they carried a blue cast. These are desaturated cool grays. */
+  --clinical-white: #14181D;
+  --surface-white: #1C2127;
+  --primary-dark: #0A0D10;
+
+  --text-primary: #EDEFF2;
+  --text-secondary: #AEB4BB;
+  --text-muted: #767C84;
+
+  --border-default: #2A2F36;
+  --border-strong: #383E46;
+
+  --clinical-teal-tint: rgba(13, 148, 136, 0.20);
+  --warning-tint: rgba(245, 158, 11, 0.16);
+  --error-tint: rgba(220, 38, 38, 0.18);
+  --success-tint: rgba(16, 185, 129, 0.16);
+  --info-tint: rgba(56, 189, 248, 0.20);
+
+  --shadow-resting: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-hover: 0 8px 34px rgba(0, 0, 0, 0.5);
+
+  --glass-bg: rgba(28, 33, 39, 0.6);
+  --glass-bg-strong: rgba(28, 33, 39, 0.82);
+  --glass-border: rgba(94, 234, 212, 0.16);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+
+  --mesh-surface: #0A0D10;
+  --mesh-glow-1: rgba(94, 234, 212, 0.18);
+  --mesh-glow-2: rgba(56, 189, 248, 0.16);
+  --mesh-glow-3: rgba(34, 211, 238, 0.13);
+  --mesh-grid-line: rgba(94, 234, 212, 0.07);
+
+  --on-warning-tint-d1: #FDE68A;
+  --on-warning-tint-d2: #FCD34D;
+  --on-warning-tint-d3: #FDBA74;
+  --on-info-tint: #7DD3FC;
+
+  --tint-mix-base: #232A31;
+
+  /* Dedicated flat page background — solid neutral charcoal, NOT the
+     translucent teal tint (that token is meant for small element tints
+     like badges, and looks murky stretched across a whole page). */
+  --page-bg: #0F1215;
+}
+
+/* Smooth theme swap — color/background transitions on the handful of
+   properties that change between light/dark, not a blanket `transition: all`. */
+html { transition: background-color var(--transition-smooth); }
+body, .dcs-panel, .dcs-stat-card, .dcs-quick-action, .dcs-mascot-card,
+.dcs-app__topbar, .dcs-pillnav, .dcs-account-menu__trigger, .dcs-app__dropdown,
+.dcs-input, .dcs-textarea, .dcs-select, .dcs-table, .dcs-error-card,
+.dcs-login__form-wrap {
+  transition: background-color var(--transition-smooth), border-color var(--transition-smooth),
+              color var(--transition-smooth), box-shadow var(--transition-smooth);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.dcs-focus-ring:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   2. SIDEBAR  (§14 Layout Rules — 240–280px expanded / ~72px collapsed)
+   -------------------------------------------------------------------------- */
+.dcs-sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 260px;
+  height: 100vh;
+  background: var(--surface-white);
+  border-right: 1px solid var(--border-default);
+  transition: width var(--transition-standard);
+  flex-shrink: 0;
+}
+
+.dcs-sidebar.dcs-collapsed {
+  width: 72px;
+}
+
+.dcs-sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3);
+  height: 64px;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.dcs-sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 600;
+  color: var(--primary-dark);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.dcs-sidebar.dcs-collapsed .dcs-sidebar__brand span {
+  display: none;
+}
+
+.dcs-sidebar__toggle {
+  width: var(--tap-target-min);
+  height: var(--tap-target-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-input);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.dcs-sidebar__toggle:hover {
+  background: var(--clinical-teal-tint);
+  color: var(--clinical-teal);
+}
+
+.dcs-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  overflow-y: auto;
+}
+
+.dcs-sidebar__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  height: var(--tap-target-min);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-input);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: var(--text-small);
+  font-weight: 500;
+  border-left: 3px solid transparent;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.dcs-sidebar__item svg {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.dcs-sidebar__item:hover {
+  background: var(--clinical-teal-tint);
+  color: var(--clinical-teal-dark);
+}
+
+.dcs-sidebar__item.dcs-active {
+  background: var(--clinical-teal-tint);
+  color: var(--clinical-teal-dark);
+  border-left-color: var(--clinical-teal);
+  font-weight: 600;
+}
+
+.dcs-sidebar.dcs-collapsed .dcs-sidebar__item span {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   3. TOP NAVBAR  (§14 — branding + primary nav + trust disclaimer)
+   -------------------------------------------------------------------------- */
+.dcs-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  padding: 0 var(--space-4);
+  background: var(--surface-white);
+  border-bottom: 1px solid var(--border-default);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.dcs-navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 700;
+  font-size: var(--text-h3);
+  color: var(--primary-dark);
+}
+
+.dcs-navbar__brand .dcs-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--clinical-teal);
+}
+
+.dcs-navbar__disclaimer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-micro);
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--clinical-white);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3);
+}
+
+.dcs-navbar__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* --------------------------------------------------------------------------
+   4. BOTTOM NAVIGATION BAR  (§5, §14 — current implementation, persistent)
+   -------------------------------------------------------------------------- */
+.dcs-bottomnav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: var(--surface-white);
+  border-top: 1px solid var(--border-default);
+  box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.06);
+  z-index: 50;
+}
+
+.dcs-bottomnav__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-width: var(--tap-target-min);
+  min-height: var(--tap-target-min);
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: var(--text-micro);
+  font-weight: 500;
+  border-radius: var(--radius-input);
+  transition: color var(--transition-fast);
+}
+
+.dcs-bottomnav__item svg {
+  width: 22px;
+  height: 22px;
+}
+
+.dcs-bottomnav__item.dcs-active {
+  color: var(--clinical-teal);
+}
+
+/* --------------------------------------------------------------------------
+   5. BUTTONS  (§12 Component Rules)
+   -------------------------------------------------------------------------- */
+.dcs-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--tap-target-min);
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-button);
+  font-family: var(--font-family);
+  font-size: var(--text-small);
+  font-weight: 600;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast),
+              color var(--transition-fast), box-shadow var(--transition-fast);
+  white-space: nowrap;
+}
+
+.dcs-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.dcs-btn--primary {
+  background: var(--clinical-teal);
+  color: #fff;
+}
+.dcs-btn--primary:hover { background: var(--clinical-teal-dark); }
+
+.dcs-btn--secondary {
+  background: transparent;
+  border-color: var(--clinical-teal);
+  color: var(--clinical-teal);
+}
+.dcs-btn--secondary:hover { background: var(--clinical-teal-tint); }
+
+.dcs-btn--ghost {
+  background: transparent;
+  color: var(--text-secondary);
+}
+.dcs-btn--ghost:hover { background: var(--clinical-white); color: var(--text-primary); }
+
+.dcs-btn--destructive {
+  background: var(--error);
+  color: #fff;
+}
+.dcs-btn--destructive:hover { background: #B91C1C; }
+
+.dcs-btn--small {
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  font-size: var(--text-micro);
+}
+
+.dcs-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.dcs-btn--icon-only {
+  width: var(--tap-target-min);
+  padding: 0;
+}
+
+/* --------------------------------------------------------------------------
+   6. INPUT FIELDS  (§12 Component Rules)
+   -------------------------------------------------------------------------- */
+.dcs-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  width: 100%;
+}
+
+.dcs-field__label {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.dcs-field__helper {
+  font-size: var(--text-micro);
+  color: var(--text-muted);
+}
+
+.dcs-field__error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-micro);
+  color: var(--error);
+  font-weight: 500;
+}
+
+.dcs-input,
+.dcs-textarea,
+.dcs-select {
+  font-family: var(--font-family);
+  font-size: var(--text-body);
+  color: var(--text-primary);
+  background: var(--surface-white);
+  border: 1.5px solid var(--border-default);
+  border-radius: var(--radius-input);
+  padding: var(--space-2) var(--space-3);
+  min-height: var(--tap-target-min);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  width: 100%;
+}
+
+.dcs-textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.dcs-input:hover,
+.dcs-textarea:hover,
+.dcs-select:hover {
+  border-color: var(--border-strong);
+}
+
+.dcs-input:focus,
+.dcs-textarea:focus,
+.dcs-select:focus {
+  outline: none;
+  border-color: var(--clinical-teal);
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+}
+
+.dcs-field.dcs-error .dcs-input,
+.dcs-field.dcs-error .dcs-textarea,
+.dcs-field.dcs-error .dcs-select {
+  border-color: var(--error);
+}
+.dcs-field.dcs-error .dcs-input:focus,
+.dcs-field.dcs-error .dcs-textarea:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.dcs-file-input {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap-target-min);
+  padding: var(--space-2) var(--space-3);
+  border: 1.5px dashed var(--border-strong);
+  border-radius: var(--radius-input);
+  color: var(--text-secondary);
+  font-size: var(--text-small);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+.dcs-file-input:hover {
+  border-color: var(--clinical-teal);
+  background: var(--clinical-teal-tint);
+}
+
+/* --------------------------------------------------------------------------
+   7. PATIENT CARD  (§5 Left column, §12 Cards)
+   -------------------------------------------------------------------------- */
+.dcs-patient-card {
+  background: var(--surface-white);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-resting);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.dcs-patient-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dcs-patient-card__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--clinical-teal-tint);
+  color: var(--clinical-teal-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: var(--text-small);
+}
+
+.dcs-patient-card__name {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.dcs-patient-card__id {
+  font-size: var(--text-micro);
+  color: var(--text-muted);
+}
+
+.dcs-patient-card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--border-default);
+  font-size: var(--text-small);
+}
+
+.dcs-patient-card__row-label {
+  color: var(--text-muted);
+}
+
+.dcs-patient-card__row-value {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   8. AI RESULT CARD  (§5 Right column, §6.2 Severity, §11 Confidence shown)
+   -------------------------------------------------------------------------- */
+.dcs-result-card {
+  background: var(--surface-white);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-resting);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border-left: 4px solid var(--border-default);
+  transition: box-shadow var(--transition-smooth), transform var(--transition-smooth);
+}
+
+.dcs-result-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-1px);
+}
+
+/* border-left color mirrors severity — color + text + icon, never color alone */
+.dcs-result-card[data-severity="e"]  { border-left-color: var(--severity-e); }
+.dcs-result-card[data-severity="d1"] { border-left-color: var(--severity-d1); }
+.dcs-result-card[data-severity="d2"] { border-left-color: var(--severity-d2); }
+.dcs-result-card[data-severity="d3"] { border-left-color: var(--severity-d3); }
+.dcs-result-card[data-severity="p"]  { border-left-color: var(--severity-p); }
+
+.dcs-result-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dcs-result-card__title {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.dcs-result-card__location {
+  font-size: var(--text-micro);
+  color: var(--text-muted);
+}
+
+.dcs-result-card__confidence {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.dcs-confidence-bar {
+  flex: 1;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--border-default);
+  overflow: hidden;
+}
+
+.dcs-confidence-bar__fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--clinical-teal);
+  transition: width var(--transition-standard);
+}
+
+.dcs-result-card__confidence-value {
+  font-size: var(--text-micro);
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 34px;
+  text-align: right;
+}
+
+/* --------------------------------------------------------------------------
+   9. UPLOAD AREA  (§5 Center column dropzone)
+   -------------------------------------------------------------------------- */
+.dcs-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 260px;
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius-card);
+  background: var(--clinical-white);
+  color: var(--text-secondary);
+  text-align: center;
+  padding: var(--space-5);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.dcs-upload svg {
+  width: 40px;
+  height: 40px;
+  color: var(--clinical-teal);
+}
+
+.dcs-upload__title {
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.dcs-upload__hint {
+  font-size: var(--text-micro);
+  color: var(--text-muted);
+}
+
+.dcs-upload:hover,
+.dcs-upload.dcs-dragover {
+  border-color: var(--clinical-teal);
+  background: var(--clinical-teal-tint);
+}
+
+.dcs-upload.dcs-error {
+  border-color: var(--error);
+  background: var(--error-tint);
+}
+
+.dcs-upload.dcs-has-file {
+  border-style: solid;
+  border-color: var(--clinical-teal);
+  padding: var(--space-3);
+  min-height: auto;
+}
+
+.dcs-upload__preview {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  text-align: left;
+}
+
+.dcs-upload__preview img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: var(--radius-input);
+  border: 1px solid var(--border-default);
+}
+
+.dcs-upload__filename {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.dcs-upload__filesize {
+  font-size: var(--text-micro);
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   10. STATUS BADGES  (§6.2 Severity + system status, §13 color+text+icon)
+   -------------------------------------------------------------------------- */
+.dcs-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-micro);
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.dcs-badge svg { width: 14px; height: 14px; }
+
+/* Severity badges — background tint + solid-color text/icon, never hue alone */
+.dcs-badge--e  { background: color-mix(in srgb, var(--severity-e) 20%, var(--tint-mix-base));  color: var(--severity-e); }
+.dcs-badge--d1 { background: color-mix(in srgb, var(--severity-d1) 28%, var(--tint-mix-base)); color: var(--on-warning-tint-d1); }
+.dcs-badge--d2 { background: color-mix(in srgb, var(--severity-d2) 26%, var(--tint-mix-base)); color: var(--on-warning-tint-d2); }
+.dcs-badge--d3 { background: color-mix(in srgb, var(--severity-d3) 24%, var(--tint-mix-base)); color: var(--on-warning-tint-d3); }
+.dcs-badge--p  { background: color-mix(in srgb, var(--severity-p) 20%, var(--tint-mix-base)); color: var(--severity-p); }
+
+/* System status badges */
+.dcs-badge--processing { background: var(--icy-mint); color: #0E6E62; }
+.dcs-badge--success     { background: var(--success-tint); color: var(--success); }
+.dcs-badge--warning     { background: var(--warning-tint); color: var(--on-warning-tint-d2); }
+.dcs-badge--error       { background: var(--error-tint); color: var(--error); }
+.dcs-badge--neutral     { background: var(--clinical-white); color: var(--text-secondary); border: 1px solid var(--border-default); }
+
+/* --------------------------------------------------------------------------
+   11. TOAST NOTIFICATIONS  (§10.2 subtle motion, §13 accessibility)
+   -------------------------------------------------------------------------- */
+.dcs-toast-container {
+  position: fixed;
+  top: var(--space-4);
+  right: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  z-index: 100;
+  width: min(360px, calc(100vw - 2 * var(--space-4)));
+}
+
+.dcs-toast {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  background: var(--surface-white);
+  border-radius: var(--radius-input);
+  box-shadow: var(--shadow-hover);
+  padding: var(--space-3);
+  border-left: 4px solid var(--border-default);
+  overflow: hidden;
+  animation: dcs-toast-in var(--transition-standard) ease-out;
+}
+
+@keyframes dcs-toast-in {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.dcs-toast.dcs-toast--leaving {
+  animation: dcs-toast-out var(--transition-fast) ease-in forwards;
+}
+
+@keyframes dcs-toast-out {
+  to { opacity: 0; transform: translateX(16px); }
+}
+
+.dcs-toast svg { width: 20px; height: 20px; flex-shrink: 0; margin-top: 1px; }
+
+.dcs-toast--success { border-left-color: var(--success); }
+.dcs-toast--success svg { color: var(--success); }
+.dcs-toast--warning { border-left-color: var(--warning); }
+.dcs-toast--warning svg { color: var(--warning); }
+.dcs-toast--error { border-left-color: var(--error); }
+.dcs-toast--error svg { color: var(--error); }
+.dcs-toast--info { border-left-color: var(--icy-blue); }
+.dcs-toast--info svg { color: var(--icy-blue); }
+
+.dcs-toast__body { flex: 1; }
+.dcs-toast__title { font-size: var(--text-small); font-weight: 600; color: var(--text-primary); }
+.dcs-toast__message { font-size: var(--text-micro); color: var(--text-secondary); margin-top: 2px; }
+
+.dcs-toast__close {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: var(--radius-input);
+}
+.dcs-toast__close:hover { background: var(--clinical-white); color: var(--text-primary); }
+
+.dcs-toast__progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: currentColor;
+  opacity: 0.35;
+  animation: dcs-toast-progress linear forwards;
+}
+
+@keyframes dcs-toast-progress {
+  from { width: 100%; }
+  to   { width: 0%; }
+}
+
+/* --------------------------------------------------------------------------
+   12. LOADING ANIMATION  (§10.2 calm continuous indicator, never jarring)
+   -------------------------------------------------------------------------- */
+.dcs-spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--clinical-teal-tint);
+  border-top-color: var(--clinical-teal);
+  border-radius: 50%;
+  animation: dcs-spin 0.8s linear infinite;
+}
+
+@keyframes dcs-spin {
+  to { transform: rotate(360deg); }
+}
+
+.dcs-loading-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-small);
+  color: var(--text-secondary);
+}
+
+/* Calm pulse variant — for "analyzing" panels, not a spinner */
+.dcs-pulse-dot {
+  display: inline-flex;
+  gap: var(--space-1);
+}
+.dcs-pulse-dot span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--clinical-teal);
+  animation: dcs-pulse 1.2s ease-in-out infinite;
+}
+.dcs-pulse-dot span:nth-child(2) { animation-delay: 0.15s; }
+.dcs-pulse-dot span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes dcs-pulse {
+  0%, 80%, 100% { opacity: 0.25; transform: scale(0.85); }
+  40% { opacity: 1; transform: scale(1); }
+}
+
+.dcs-loading-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  color: var(--text-secondary);
+}
+
+.dcs-loading-panel__label {
+  font-size: var(--text-small);
+  font-weight: 500;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dcs-spinner { animation-duration: 1.6s; }
+  .dcs-pulse-dot span { animation: none; opacity: 0.7; }
+}
+
+/* --------------------------------------------------------------------------
+   13. PAGE / SECTION FADE-IN  (§10.2 — subtle, purposeful motion only)
+   -------------------------------------------------------------------------- */
+.dcs-fade-in {
+  animation: dcs-fade-in var(--transition-page) both;
+}
+
+@keyframes dcs-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dcs-fade-in { animation: none; }
+}
+
+/* --------------------------------------------------------------------------
+   14. GLASSMORPHISM  (§9.3 — accent surfaces only: panels, cards, pill nav,
+   dropdown, avatar trigger, mascot card, error/login cards). Applied via the
+   .dcs-glass marker class rather than globally, per the Design Bible rule
+   that glass is an accent effect, not a page-wide style.
+   -------------------------------------------------------------------------- */
+.dcs-glass {
+  background: var(--glass-bg) !important;
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+/* Buttons/inputs inside a glass surface keep their own opaque treatment —
+   glass is for the container, not for every child control. */
+.dcs-glass .dcs-btn--primary { background: var(--clinical-teal); }
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .dcs-glass { background: var(--glass-bg-strong) !important; }
+}
+
+/* --------------------------------------------------------------------------
+   15. GRADIENT MESH  (§4 brand personality — cyan neural-network echo on
+   dark surfaces: topbar, hero banners, mascot card, login brand panel).
+   Static by default; drifts very slowly if motion is allowed.
+   -------------------------------------------------------------------------- */
+.dcs-mesh {
+  position: relative;
+  background:
+    radial-gradient(ellipse 60% 80% at 12% 20%, var(--mesh-glow-1), transparent 55%),
+    radial-gradient(ellipse 50% 70% at 88% 85%, var(--mesh-glow-2), transparent 55%),
+    radial-gradient(ellipse 45% 60% at 60% 10%, var(--mesh-glow-3), transparent 60%),
+    var(--mesh-surface) !important;
+  background-size: 180% 180%, 180% 180%, 180% 180%, 100% 100%;
+  background-position: 0% 0%, 100% 100%, 50% 0%, 0 0;
+  animation: dcs-mesh-drift 24s ease-in-out infinite;
+  color: #E2E8F0;
+}
+
+.dcs-mesh::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--mesh-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--mesh-grid-line) 1px, transparent 1px);
+  background-size: 36px 36px;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.dcs-app__topbar.dcs-mesh::before {
+  display: none;
+}
+
+@keyframes dcs-mesh-drift {
+  0%, 100% { background-position: 0% 0%, 100% 100%, 50% 0%, 0 0; }
+  50%      { background-position: 8% 6%, 92% 94%, 46% 4%, 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dcs-mesh { animation: none; }
+}
+
+/* Text inside a mesh surface defaults to light, since these are always dark */
+.dcs-mesh, .dcs-mesh h1, .dcs-mesh h2, .dcs-mesh h3 { color: #fff; }
+.dcs-mesh .dcs-navbar__disclaimer {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #CBD5E1;
+}
+.dcs-mesh .dcs-app__topbar-brand { color: #fff; }
+
+/* --------------------------------------------------------------------------
+   16. THEME TOGGLE  (dark mode switch — persisted via localStorage, wired
+   up in js/theme.js; markup/attribute plumbing added in the HTML pass)
+   -------------------------------------------------------------------------- */
+.dcs-theme-toggle {
+  position: relative;
+  width: var(--tap-target-min);
+  height: var(--tap-target-min);
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color var(--transition-fast), transform var(--transition-fast);
+}
+.dcs-theme-toggle:hover { color: var(--clinical-teal); transform: translateY(-1px); }
+
+.dcs-theme-toggle__icon {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  transition: opacity var(--transition-smooth), transform var(--transition-smooth);
+}
+.dcs-theme-toggle__icon--sun { opacity: 1; transform: scale(1) rotate(0deg); }
+.dcs-theme-toggle__icon--moon { opacity: 0; transform: scale(0.5) rotate(-90deg); }
+
+[data-theme="dark"] .dcs-theme-toggle__icon--sun { opacity: 0; transform: scale(0.5) rotate(90deg); }
+[data-theme="dark"] .dcs-theme-toggle__icon--moon { opacity: 1; transform: scale(1) rotate(0deg); color: var(--icy-mint); }
+
+/* On a .dcs-mesh surface (topbar), keep the toggle legible against dark bg */
+.dcs-mesh .dcs-theme-toggle { color: #CBD5E1; border-color: rgba(148,163,184,0.3); }
+.dcs-mesh .dcs-theme-toggle:hover { color: var(--icy-mint); }
+
+/* Login page places the toggle as a standalone floating button (no topbar) */
+.dcs-login__theme-toggle {
+  position: fixed;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: 40;
+  color: #CBD5E1;
+}
+
+/* --------------------------------------------------------------------------
+   17. FIXED GLASS PILL NAV  (replaces the sidebar + mobile bottom nav —
+   one nav, bottom-center, every screen size, per Design Bible nav overhaul)
+   -------------------------------------------------------------------------- */
+.dcs-pillnav {
+  position: fixed;
+  left: 50%;
+  bottom: var(--space-3);
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  border-radius: var(--radius-pill);
+  max-width: calc(100vw - 96px);
+}
+
+.dcs-pillnav__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 36px;
+  padding: 0 var(--space-6);
+  border-radius: var(--radius-pill);
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: var(--text-micro);
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.dcs-pillnav__item svg { width: 19px; height: 19px; flex-shrink: 0; }
+
+.dcs-pillnav__item span {
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dcs-pillnav__item:hover {
+  background: var(--clinical-teal-tint);
+  color: var(--clinical-teal-dark);
+}
+
+.dcs-pillnav__item.dcs-active {
+  background: var(--clinical-teal);
+  color: #fff;
+}
+
+/* Collapse to icon-only pills on narrow screens so 4 items always fit */
+@media (max-width: 560px) {
+  .dcs-pillnav { gap: 0; padding: 5px; max-width: calc(100vw - 80px); }
+  .dcs-pillnav__item { padding: 0; width: 44px; justify-content: center; }
+  .dcs-pillnav__item span { display: none; }
+}
+
+/* --------------------------------------------------------------------------
+   18. ACCOUNT MENU  (bottom-left floating glass avatar — replaces the old
+   top-right avatar dropdown; same dropdown contents, opens upward)
+   -------------------------------------------------------------------------- */
+.dcs-account-menu {
+  position: fixed;
+  left: var(--space-3);
+  bottom: var(--space-3);
+  z-index: 51;
+}
+
+.dcs-account-menu__trigger {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-fast);
+}
+.dcs-account-menu__trigger:hover { transform: translateY(-2px); }
+.dcs-account-menu__trigger .dcs-patient-card__avatar { width: 42px; height: 42px; }
+
+/* Dropdown opening upward from the bottom-left trigger */
+.dcs-app__dropdown--up {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 0;
+  top: auto;
+  right: auto;
+}
+
+@media (max-width: 560px) {
+  .dcs-account-menu { left: var(--space-2); bottom: var(--space-2); }
+  .dcs-account-menu__trigger { width: 46px; height: 46px; }
+}
