@@ -1,0 +1,13 @@
+# CPU-only torch wheels — without this line, pip installs the default
+# CUDA-enabled build, which is far larger and unnecessary since Render's
+# free tier has no GPU. This line alone is why we don't need HF's version
+# pins: we control torch directly instead of fighting what ultralytics
+# would otherwise pull in.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.4.1+cpu
+torchvision==0.19.1+cpu
+
+ultralytics>=8.3.0
+opencv-python-headless>=4.9.0
+Pillow>=10.0.0
+gradio>=4.44.0
