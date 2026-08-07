@@ -471,6 +471,8 @@ def download_report(sid):
 @app.route("/api/analyze", methods=["POST"])
 @dentist_required
 def analyze():
+    import sys
+    print("[DEBUG] /api/analyze route was hit", file=sys.stderr, flush=True)
     file = request.files.get("image")
     if not file:
         return jsonify({"ok": False, "message": "No X-ray image provided."}), 400
