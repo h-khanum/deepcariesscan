@@ -38,6 +38,11 @@ Adjust CLASS_TO_SEVERITY / MODEL_CONF below to match your training run.
 import hashlib
 import os
 import random
+import sys
+
+
+def _log(msg):
+    print(msg, file=sys.stderr, flush=True)
 
 # ---------------------------------------------------------------------------
 # Model configuration
@@ -70,16 +75,16 @@ def _load_model():
     if _model is not None:
         return _model
     if not os.path.exists(WEIGHTS_PATH):
-        print(f"[inference] No weights at {WEIGHTS_PATH} — using simulated findings.")
+        _log(f"[inference] No weights at {WEIGHTS_PATH} — using simulated findings.")
         return None
     try:
         from ultralytics import YOLO
     except ImportError:
-        print("[inference] ultralytics not installed (pip install ultralytics) — "
-              "using simulated findings.")
+        _log("[inference] ultralytics not installed (pip install ultralytics) — "
+             "using simulated findings.")
         return None
     _model = YOLO(WEIGHTS_PATH)
-    print(f"[inference] Loaded YOLO weights from {WEIGHTS_PATH}.")
+    _log(f"[inference] Loaded YOLO weights from {WEIGHTS_PATH}.")
     return _model
 
 
