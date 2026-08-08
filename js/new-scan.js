@@ -2,22 +2,11 @@
    DeepCariesScan — New Scan Behavior
    Vanilla JS, no framework (Design Bible §15).
 
-   BACKEND INTEGRATION NOTE:
-   `runAnalysis()` currently simulates a ~2.2s inference delay and returns
-   hardcoded lesions. Replace its body with something like:
-
-     const form = new FormData();
-     form.append("image", uploadedFile);
-     form.append("patient_id", selectedPatient?.id || null);
-     const res = await fetch("/api/analyze", { method: "POST", body: form });
-     const { lesions, processed_image_url } = await res.json();
-
-   `lesions` should keep the shape used below: [{ tooth, surface, severity,
-   confidence, box: {x,y,w,h} }] with box values as PERCENTAGES of image
-   width/height (0-100) so the overlay positions correctly regardless of
-   the rendered image size. `processed_image_url` can replace the client-
-   drawn boxes entirely if the Flask/OpenCV backend already burns them in —
-   in that case just render that image and skip the .dcs-bbox overlay.
+   LIVE INTEGRATION: runAnalysis() calls the real Flask backend at
+   POST /api/analyze. See backend/inference.py for the lesion shape:
+   [{ surface, severity, confidence, box: {x,y,w,h} }] — note there is no
+   "tooth" field from the model, so the results list shows the surface
+   label instead of a tooth number.
    ========================================================================== */
 
 (function () {
@@ -212,15 +201,8 @@
   }
 
   /* ------------------------------------------------------------------------
-     ANALYSIS (mock — see integration note at top of file)
+     ANALYSIS — real call to POST /api/analyze
      ------------------------------------------------------------------------ */
-  const MOCK_LESIONS = [
-    { tooth: "#14", surface: "Occlusal surface", severity: "e",  confidence: 62, box: { x: 12, y: 10, w: 16, h: 20 } },
-    { tooth: "#19", surface: "Mesial surface",    severity: "d2", confidence: 78, box: { x: 42, y: 30, w: 14, h: 18 } },
-    { tooth: "#30", surface: "Distal surface",    severity: "p",  confidence: 91, box: { x: 65, y: 50, w: 18, h: 22 } },
-    { tooth: "#3",  surface: "Buccal surface",    severity: "d1", confidence: 55, box: { x: 25, y: 55, w: 15, h: 17 } },
-  ];
-
   const SEVERITY_LABEL = { e: "Enamel", d1: "Dentin 1", d2: "Dentin 2", d3: "Dentin 3", p: "Pulp" };
 
   function highestSeverityRank(lesions) {
@@ -245,16 +227,20 @@
     resultsEmpty.hidden = true;
     resultsSummary.hidden = false;
     const severityOrder = ["e", "d1", "d2", "d3", "p"];
-    const worst = SEVERITY_LABEL[severityOrder[highestSeverityRank(lesions)]];
+    const worst = lesions.length
+      ? SEVERITY_LABEL[severityOrder[highestSeverityRank(lesions)]]
+      : "None";
     resultsSummary.innerHTML = `<strong>${lesions.length} lesion${lesions.length === 1 ? "" : "s"} detected</strong> · highest severity: <strong>${worst}</strong>`;
 
+    // Real model output has no tooth number (that field never existed in
+    // inference.py's response) — the card title uses the finding label
+    // (e.g. "Dentin Caries (D2)") instead of a tooth number.
     resultsList.innerHTML = lesions.map((l, i) => `
       <div class="dcs-result-card" data-severity="${l.severity}">
         <div class="dcs-result-card__top">
-          <span class="dcs-result-card__title">Lesion ${i + 1} — Tooth ${l.tooth}</span>
+          <span class="dcs-result-card__title">Lesion ${i + 1} — ${l.surface}</span>
           <span class="dcs-badge dcs-badge--${l.severity}">${SEVERITY_LABEL[l.severity]}</span>
         </div>
-        <span class="dcs-result-card__location">${l.surface}</span>
         <div class="dcs-result-card__confidence">
           <div class="dcs-confidence-bar"><div class="dcs-confidence-bar__fill" style="width:${l.confidence}%;background:var(--severity-${l.severity})"></div></div>
           <span class="dcs-result-card__confidence-value">${l.confidence}%</span>
@@ -271,7 +257,7 @@
     analyzeLabel.textContent = isAnalyzing ? "Analyzing…" : "Analyze X-ray";
   }
 
-  function runAnalysis() {
+  async function runAnalysis() {
     if (!uploadedFile || !patientIsValid()) return;
 
     setAnalyzing(true);
@@ -281,23 +267,46 @@
     const stopPanel = DCS.loading.showPanel(scanLoading, "Analyzing X-ray…");
     scanLoading.hidden = false;
 
-    // Simulated inference delay — see integration note at top of file
-    setTimeout(() => {
+    try {
+      const form = new FormData();
+      form.append("image", uploadedFile);
+
+      const res = await fetch("/api/analyze", { method: "POST", body: form });
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok || !data || !data.ok) {
+        const message = (data && data.message) || `Analysis failed (${res.status})`;
+        throw new Error(message);
+      }
+
+      const lesions = data.lesions || [];
+
       stopPanel();
       scanLoading.hidden = true;
       scanResult.hidden = false;
       setAnalyzing(false);
 
-      renderBoundingBoxes(MOCK_LESIONS);
-      renderResultsList(MOCK_LESIONS);
+      renderBoundingBoxes(lesions);
+      renderResultsList(lesions);
       hasResults = true;
 
       DCS.toast.show({
         type: "success",
         title: "Analysis complete",
-        message: `${MOCK_LESIONS.length} lesions detected across the uploaded X-ray.`,
+        message: `${lesions.length} lesion${lesions.length === 1 ? "" : "s"} detected across the uploaded X-ray.`,
       });
-    }, 2200);
+    } catch (err) {
+      stopPanel();
+      scanLoading.hidden = true;
+      xrayUpload.style.display = "";
+      setAnalyzing(false);
+
+      DCS.toast.show({
+        type: "error",
+        title: "Analysis failed",
+        message: err.message || "Could not reach the analysis service. Please try again.",
+      });
+    }
   }
 
   analyzeBtn.addEventListener("click", runAnalysis);
