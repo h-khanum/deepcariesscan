@@ -56,4 +56,5 @@ This is a diagnostic **aid**, not a replacement for a licensed dentist's diagnos
 - Tajallah Zakeen
 
 **Supervisor:** Dr. Syed Adeel Ali Shah — Department of CS&IT, UET Peshawar
+
 **Clinical partner:** Khyber College of Dentistry (KCD), Peshawar
